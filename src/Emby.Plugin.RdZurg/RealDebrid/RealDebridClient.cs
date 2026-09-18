@@ -57,6 +57,15 @@ public sealed class RealDebridClient
     private static DateTime _lastUnrestrict = DateTime.MinValue;
     private static DateTime _blockedUntil = DateTime.MinValue;
 
+    /// <summary>
+    /// The floor under the gap between calls. It exists to protect a live account; tests replaying a recorded
+    /// one set it to zero, and nothing else may.
+    /// </summary>
+    internal static TimeSpan MinimumInterval { get; set; } = TimeSpan.FromMilliseconds(300);
+
+    /// <summary>The gap Real-Debrid wants between two unrestrict calls, which is far longer than the rest.</summary>
+    internal static TimeSpan UnrestrictInterval { get; set; } = TimeSpan.FromSeconds(5);
+
     private readonly HttpClient _http;
     private readonly string _token;
     private readonly TimeSpan _minInterval;
@@ -69,7 +78,7 @@ public sealed class RealDebridClient
     {
         _http = http;
         _token = token;
-        _minInterval = TimeSpan.FromMilliseconds(Math.Max(minRequestIntervalMs, 300));
+        _minInterval = TimeSpan.FromMilliseconds(Math.Max(minRequestIntervalMs, MinimumInterval.TotalMilliseconds));
     }
 
     /// <summary>
@@ -130,6 +139,21 @@ public sealed class RealDebridClient
         }
 
         return all;
+    }
+
+    /// <summary>Reads which account the token belongs to.</summary>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>The account id, which scopes every signed URL.</returns>
+    public async Task<string> GetAccountIdAsync(CancellationToken cancellationToken)
+    {
+        using var response = await SendAsync(HttpMethod.Get, Base + "/user", null, cancellationToken).ConfigureAwait(false);
+        response.EnsureSuccessStatusCode();
+        var body = await response.Content.ReadAsStringAsync(cancellationToken).ConfigureAwait(false);
+        var user = JsonSerializer.Deserialize<RdUser>(body, _json);
+
+        return user is null || user.Id <= 0
+            ? throw new RealDebridRefusedException("Real-Debrid did not say which account this token belongs to.")
+            : user.Id.ToString(CultureInfo.InvariantCulture);
     }
 
     /// <summary>Reads one torrent's detail, including its file list.</summary>
@@ -242,7 +266,7 @@ public sealed class RealDebridClient
             var wait = _minInterval - (DateTime.UtcNow - _lastCall);
             if (unrestrict)
             {
-                var linkWait = TimeSpan.FromSeconds(5) - (DateTime.UtcNow - _lastUnrestrict);
+                var linkWait = UnrestrictInterval - (DateTime.UtcNow - _lastUnrestrict);
                 if (linkWait > wait) wait = linkWait;
             }
             if (wait > TimeSpan.Zero)

@@ -57,6 +57,13 @@ public class PluginOptions : EditableOptionsBase
     [IsAdvanced]
     public bool RedirectDirectStreams { get; set; }
 
+    /// <summary>Gets or sets a value indicating whether a pass may remove most of the library at once.</summary>
+    [DisplayName("Allow large cleanups")]
+    [Description("Off, a pass that would remove most of the library is refused instead: one bad answer from "
+        + "Real-Debrid would otherwise take the whole library and everything Emby knows about it.")]
+    [IsAdvanced]
+    public bool AllowLargeCleanup { get; set; }
+
     /// <summary>Gets or sets the minimum gap between Real-Debrid calls, in milliseconds.</summary>
     [DisplayName("API interval (ms)")]
     [Description("At least 300 ms between Real-Debrid calls.")]

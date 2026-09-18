@@ -1,0 +1,417 @@
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using Emby.Plugin.RdZurg.Configuration;
+using Emby.Plugin.RdZurg.RealDebrid;
+using Emby.Plugin.RdZurg.Streaming;
+using MediaBrowser.Model.Logging;
+
+namespace Emby.Plugin.RdZurg.Library;
+
+/// <summary>What one pass over the account did.</summary>
+public sealed class SyncResult
+{
+    /// <summary>Gets or sets how many torrents the account listed.</summary>
+    public int TorrentsSeen { get; set; }
+
+    /// <summary>Gets or sets how many were already accounted for, and cost no detail call.</summary>
+    public int TorrentsAlreadyKnown { get; set; }
+
+    /// <summary>Gets or sets how many detail calls the pass spent.</summary>
+    public int DetailCalls { get; set; }
+
+    /// <summary>Gets or sets how many files were published for the first time.</summary>
+    public int FilesWritten { get; set; }
+
+    /// <summary>Gets or sets how many files had their URL rewritten.</summary>
+    public int FilesRewritten { get; set; }
+
+    /// <summary>Gets or sets how many files were already correct.</summary>
+    public int FilesUnchanged { get; set; }
+
+    /// <summary>Gets or sets how many files were removed.</summary>
+    public int FilesDeleted { get; set; }
+
+    /// <summary>Gets or sets how many releases were skipped as copies of something already published.</summary>
+    public int Duplicates { get; set; }
+
+    /// <summary>Gets or sets how many releases were held back by the version cap.</summary>
+    public int Capped { get; set; }
+
+    /// <summary>Gets or sets how many paths had to be made unique.</summary>
+    public int Collisions { get; set; }
+
+    /// <summary>Gets or sets whether cleanup was refused because too much would have gone at once.</summary>
+    public bool CleanupRefused { get; set; }
+
+    /// <summary>Gets or sets the account the pass published for.</summary>
+    public string AccountId { get; set; } = string.Empty;
+
+    /// <summary>Describes the pass for the log.</summary>
+    /// <returns>One line.</returns>
+    public override string ToString() => string.Format(
+        CultureInfo.InvariantCulture,
+        "{0} torrents ({1} already known, {2} detail calls): {3} written, {4} rewritten, {5} unchanged, {6} deleted, {7} duplicates, {8} capped{9}",
+        TorrentsSeen,
+        TorrentsAlreadyKnown,
+        DetailCalls,
+        FilesWritten,
+        FilesRewritten,
+        FilesUnchanged,
+        FilesDeleted,
+        Duplicates,
+        Capped,
+        CleanupRefused ? ", cleanup refused" : string.Empty);
+}
+
+/// <summary>
+/// Turns a Real-Debrid account into the tree of <c>.strm</c> files Emby scans.
+/// </summary>
+public sealed class LibrarySync
+{
+    private readonly RealDebridClient _client;
+    private readonly StrmTree _tree;
+    private readonly Ledger _ledger;
+    private readonly ILogger _logger;
+    private readonly ReleaseNames _names = new();
+
+    /// <summary>Initializes a new instance of the <see cref="LibrarySync"/> class.</summary>
+    /// <param name="client">The provider client.</param>
+    /// <param name="tree">The tree to write.</param>
+    /// <param name="ledger">What is published where.</param>
+    /// <param name="logger">Logger.</param>
+    public LibrarySync(RealDebridClient client, StrmTree tree, Ledger ledger, ILogger logger)
+    {
+        _client = client;
+        _tree = tree;
+        _ledger = ledger;
+        _logger = logger;
+    }
+
+    /// <summary>Runs one pass.</summary>
+    /// <param name="options">The current settings.</param>
+    /// <param name="baseUrl">Where Emby reaches its own stream route.</param>
+    /// <param name="accountId">The Real-Debrid account id the URLs are signed for.</param>
+    /// <param name="progress">Progress, 0 to 100.</param>
+    /// <param name="cancellationToken">Cancellation token.</param>
+    /// <returns>What the pass did.</returns>
+    public async Task<SyncResult> RunAsync(
+        PluginOptions options,
+        string baseUrl,
+        string accountId,
+        IProgress<double>? progress,
+        CancellationToken cancellationToken)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        ArgumentException.ThrowIfNullOrEmpty(accountId);
+
+        var result = new SyncResult { AccountId = accountId };
+        var torrents = await _client.GetTorrentsAsync(options.MaxTorrents, cancellationToken).ConfigureAwait(false);
+        result.TorrentsSeen = torrents.Count;
+        _logger.Info("RD zurg: Real-Debrid listed {0} torrents", torrents.Count);
+
+        // Liveness comes from the complete listing, before any detail call can fail. Links of torrents that are
+        // still downloading or temporarily errored count too: their files have not gone anywhere.
+        var live = new HashSet<string>(torrents.SelectMany(t => t.Links).Select(RealDebridClient.LinkKey), StringComparer.Ordinal);
+
+        var desired = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var owners = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var sizes = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
+
+        // Everything already published and still live keeps its path; only the URL is rebuilt, so a changed
+        // signing key or account rewrites the file and nothing moves.
+        foreach (var entry in _ledger.Published.Where(e => live.Contains(e.Key)).ToList())
+        {
+            desired[entry.Path] = Url(baseUrl, options, accountId, entry.Key, entry.File);
+            owners[entry.Path] = entry.Key;
+            sizes[entry.Path] = entry.Bytes;
+        }
+
+        var fingerprints = new HashSet<string>(
+            _ledger.Published.Where(e => live.Contains(e.Key)).Select(e => e.Fingerprint),
+            StringComparer.OrdinalIgnoreCase);
+
+        // Collected first, decided second: a ledger rebuilt from the tree knows no sizes, and sizes are what
+        // recognise a re-added release, so every detail this pass sees has to be in hand before anything is
+        // called a duplicate.
+        var details = new List<RdTorrentInfo>();
+        var index = 0;
+        foreach (var torrent in torrents)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            progress?.Report(++index * 70.0 / Math.Max(torrents.Count, 1));
+
+            if (!string.Equals(torrent.Status, "downloaded", StringComparison.OrdinalIgnoreCase) || torrent.Links.Count == 0)
+            {
+                continue;
+            }
+
+            // The listing already carries the links, so recognising a torrent costs nothing. Links the parser
+            // had no place for are remembered as well, or every pass would re-query the same torrents.
+            if (torrent.Links.Select(RealDebridClient.LinkKey).All(_ledger.IsSettled))
+            {
+                result.TorrentsAlreadyKnown++;
+                continue;
+            }
+
+            var info = await _client.GetTorrentInfoAsync(torrent.Id, cancellationToken).ConfigureAwait(false);
+            result.DetailCalls++;
+
+            if (info is not null)
+            {
+                details.Add(info);
+            }
+        }
+
+        progress?.Report(75);
+
+        var pairs = new List<(RdTorrentInfo Info, List<(RdFile File, string Key)> Files)>();
+        foreach (var info in details)
+        {
+            var selected = info.Files.Where(f => f.Selected == 1).ToList();
+            if (selected.Count == 0 || selected.Count != info.Links.Count)
+            {
+                // A torrent whose file list and links disagree is left alone and asked about again next pass.
+                _logger.Debug(
+                    "RD zurg: skipping {0}: {1} selected files against {2} links",
+                    info.Filename,
+                    selected.Count,
+                    info.Links.Count);
+                continue;
+            }
+
+            pairs.Add((info, selected.Select((file, i) => (File: file, Key: RealDebridClient.LinkKey(info.Links[i]))).ToList()));
+        }
+
+        // What is already published only needs its size filled in; its path never moves.
+        foreach (var (info, files) in pairs)
+        {
+            foreach (var (file, key) in files)
+            {
+                if (_ledger.Find(key) is not { Outcome: LedgerOutcome.Published, Bytes: 0 } entry)
+                {
+                    continue;
+                }
+
+                entry.File = file.Path;
+                entry.Bytes = file.Bytes;
+                entry.TorrentId = info.Id;
+                _ledger.Put(entry);
+                desired[entry.Path] = Url(baseUrl, options, accountId, key, entry.File);
+                owners[entry.Path] = key;
+                sizes[entry.Path] = entry.Bytes;
+                fingerprints.Add(entry.Fingerprint);
+            }
+        }
+
+        foreach (var (info, files) in pairs)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            foreach (var (file, key) in files.Where(p => !ReleaseNames.IsVideo(p.File.Path) && !_ledger.Knows(p.Key)))
+            {
+                _ledger.Put(new LedgerEntry { Key = key, TorrentId = info.Id, File = file.Path, Bytes = file.Bytes, Outcome = LedgerOutcome.Ignored });
+            }
+
+            var videos = files
+                .Where(p => ReleaseNames.IsVideo(p.File.Path))
+                .OrderByDescending(p => p.File.Bytes)
+                .ToList();
+
+            if (videos.Count == 0)
+            {
+                continue;
+            }
+
+            // A season pack is one torrent holding many episodes, so every video file is offered to the episode
+            // parser. Only when none of them is an episode does the biggest file become a film.
+            var episodes = videos
+                .Select(v => (v.File, v.Key, Episode: _names.ParseEpisode(info.Filename, v.File.Path)))
+                .Where(v => v.Episode is not null)
+                .ToList();
+
+            if (episodes.Count > 0)
+            {
+                foreach (var (file, key, episode) in episodes)
+                {
+                    if (_ledger.IsSettled(key))
+                    {
+                        continue;
+                    }
+
+                    var label = StrmPaths.Label(file.Path, key);
+                    var path = Claim(
+                        StrmPaths.EpisodePath(ReleaseNames.SeriesTitle(episode!), episode!.SeasonNumber, episode.EpisodeNumber, episode.EndingEpisodeNumber, label, key),
+                        key,
+                        owners,
+                        () => StrmPaths.EpisodePath(ReleaseNames.SeriesTitle(episode!), episode.SeasonNumber, episode.EpisodeNumber, episode.EndingEpisodeNumber, label + " [" + key + "]", key),
+                        result);
+
+                    Publish(desired, owners, sizes, path, key, info.Id, file.Path, file.Bytes, baseUrl, options, accountId);
+                }
+
+                continue;
+            }
+
+            var primary = videos[0];
+            if (_ledger.IsSettled(primary.Key))
+            {
+                continue;
+            }
+
+            // Real-Debrid hands identical content the same link key, so the usual copy of a release is caught
+            // by the key alone, above. This catches the rest: the same name and size under a different key.
+            var fingerprint = Fingerprints.Of(primary.File.Path, primary.File.Bytes);
+            if (!fingerprints.Add(fingerprint))
+            {
+                _ledger.Put(new LedgerEntry
+                {
+                    Key = primary.Key,
+                    TorrentId = info.Id,
+                    File = primary.File.Path,
+                    Bytes = primary.File.Bytes,
+                    Outcome = LedgerOutcome.Duplicate,
+                });
+                result.Duplicates++;
+                continue;
+            }
+
+            var (title, year) = ReleaseNames.MovieTitle(primary.File.Path, info.Filename);
+            var folder = StrmPaths.MovieFolder(title, year, primary.Key);
+            var movieLabel = StrmPaths.Label(primary.File.Path, primary.Key);
+            var moviePath = Claim(
+                StrmPaths.MoviePath(folder, movieLabel),
+                primary.Key,
+                owners,
+                () => StrmPaths.MoviePath(folder, movieLabel + " [" + primary.Key + "]"),
+                result);
+
+            Publish(desired, owners, sizes, moviePath, primary.Key, info.Id, primary.File.Path, primary.File.Bytes, baseUrl, options, accountId);
+        }
+
+        progress?.Report(88);
+        result.Capped = Cap(desired, owners, sizes);
+
+        progress?.Report(92);
+
+        // Only a complete listing proves that a torrent is gone.
+        var mayDelete = options.RemoveVanishedItems && options.MaxTorrents == 0;
+        var changes = _tree.Apply(desired, mayDelete, options.AllowLargeCleanup);
+        result.FilesWritten = changes.Written;
+        result.FilesRewritten = changes.Rewritten;
+        result.FilesUnchanged = changes.Unchanged;
+        result.FilesDeleted = changes.Deleted;
+        result.CleanupRefused = changes.CleanupRefused;
+
+        if (mayDelete && !changes.CleanupRefused)
+        {
+            foreach (var entry in _ledger.Published.Where(e => !desired.ContainsKey(e.Path)).ToList())
+            {
+                _ledger.Remove(entry.Key);
+            }
+        }
+
+        progress?.Report(100);
+        return result;
+    }
+
+    /// <summary>Rebuilds the ledger from the tree when its own file is gone.</summary>
+    /// <returns>How many entries were recovered.</returns>
+    public int RecoverLedger() => _ledger.RebuildFromTree(_tree.Root, StreamUrls.KeyOf, StreamUrls.FileNameOf);
+
+    private static string Url(string baseUrl, PluginOptions options, string accountId, string key, string fileName)
+        => LinkResolver.BuildUrl(baseUrl, key, fileName, options.StreamSecret, accountId);
+
+    private static string Claim(string path, string key, Dictionary<string, string> owners, Func<string> alternative, SyncResult result)
+    {
+        if (!owners.TryGetValue(path, out var owner) || string.Equals(owner, key, StringComparison.Ordinal))
+        {
+            return path;
+        }
+
+        result.Collisions++;
+        return alternative();
+    }
+
+    private void Publish(
+        Dictionary<string, string> desired,
+        Dictionary<string, string> owners,
+        Dictionary<string, long> sizes,
+        string path,
+        string key,
+        string torrentId,
+        string file,
+        long bytes,
+        string baseUrl,
+        PluginOptions options,
+        string accountId)
+    {
+        // A path already spoken for by another link, even after the alternative, is left to its owner.
+        if (owners.TryGetValue(path, out var owner) && !string.Equals(owner, key, StringComparison.Ordinal))
+        {
+            _logger.Warn("RD zurg: {0} is already published at {1}; skipping {2}", owner, path, key);
+            _ledger.Put(new LedgerEntry { Key = key, TorrentId = torrentId, File = file, Bytes = bytes, Outcome = LedgerOutcome.Duplicate });
+            return;
+        }
+
+        desired[path] = Url(baseUrl, options, accountId, key, file);
+        owners[path] = key;
+        sizes[path] = bytes;
+        _ledger.Put(new LedgerEntry
+        {
+            Key = key,
+            Path = path,
+            TorrentId = torrentId,
+            File = file,
+            Bytes = bytes,
+            Outcome = LedgerOutcome.Published,
+        });
+    }
+
+    /// <summary>
+    /// Keeps a film folder within the number of versions Emby will group.
+    /// </summary>
+    /// <remarks>
+    /// Past the cap Emby stops grouping altogether and shows every file as its own film; the account measured for
+    /// this had 109 releases of The Matrix. The largest are kept, which is also what a viewer would pick.
+    /// </remarks>
+    private int Cap(Dictionary<string, string> desired, Dictionary<string, string> owners, Dictionary<string, long> sizes)
+    {
+        var capped = 0;
+        var folders = desired.Keys
+            .Where(p => p.StartsWith(StrmPaths.Movies + "/", StringComparison.OrdinalIgnoreCase))
+            .GroupBy(p => p[..p.LastIndexOf('/')], StringComparer.OrdinalIgnoreCase)
+            .Where(g => g.Count() > StrmPaths.MaxVersions);
+
+        foreach (var folder in folders)
+        {
+            var extra = folder
+                .OrderByDescending(p => sizes.TryGetValue(p, out var bytes) ? bytes : 0)
+                .ThenBy(p => p, StringComparer.Ordinal)
+                .Skip(StrmPaths.MaxVersions)
+                .ToList();
+
+            foreach (var path in extra)
+            {
+                var entry = _ledger.AtPath(path);
+                desired.Remove(path);
+                owners.Remove(path);
+                if (entry is not null)
+                {
+                    entry.Path = string.Empty;
+                    entry.Outcome = LedgerOutcome.Duplicate;
+                    _ledger.Put(entry);
+                }
+
+                capped++;
+            }
+
+            _logger.Info("RD zurg: {0} holds more releases than Emby groups; keeping the {1} largest", folder.Key, StrmPaths.MaxVersions);
+        }
+
+        return capped;
+    }
+}

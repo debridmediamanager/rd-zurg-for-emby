@@ -91,3 +91,15 @@ public class RdUnrestricted
     [JsonPropertyName("mimeType")]
     public string? MimeType { get; set; }
 }
+
+/// <summary>The account a token belongs to.</summary>
+public class RdUser
+{
+    /// <summary>Gets or sets the account's numeric id, which outlives any one token.</summary>
+    [JsonPropertyName("id")]
+    public long Id { get; set; }
+
+    /// <summary>Gets or sets the account's username.</summary>
+    [JsonPropertyName("username")]
+    public string Username { get; set; } = string.Empty;
+}
