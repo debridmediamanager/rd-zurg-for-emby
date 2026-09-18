@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <!--
+    Dev-only generator for tests/Emby.Plugin.RdZurg.Tests/Fixtures/parse-golden.tsv.gz. It runs the Jellyfin
+    plugin's parsing (rd-zurg-for-jellyfin 8e385f4, Library/ReleaseNames.cs, copied here) on Jellyfin.Naming
+    12.0.0, which is the behaviour the Emby port's vendored parser is held to. Not part of the plugin build.
+    dotnet run -c Release -p tools/parse-golden -- tests/Emby.Plugin.RdZurg.Tests/Fixtures /tmp/parse-golden.tsv.gz
+  -->
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net10.0</TargetFramework><Nullable>enable</Nullable><ImplicitUsings>enable</ImplicitUsings></PropertyGroup>
+  <ItemGroup><PackageReference Include="Jellyfin.Naming" Version="12.0.0" /></ItemGroup>
+</Project>

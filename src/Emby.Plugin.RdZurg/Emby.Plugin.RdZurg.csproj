@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>false</ImplicitUsings>
+    <Version>1.0.0.0</Version>
+    <AssemblyVersion>$(Version)</AssemblyVersion>
+    <FileVersion>$(Version)</FileVersion>
+    <RootNamespace>Emby.Plugin.RdZurg</RootNamespace>
+    <AssemblyName>Emby.Plugin.RdZurg</AssemblyName>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <CopyLocalLockFileAssemblies>false</CopyLocalLockFileAssemblies>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Emby supplies these at runtime; the plugin ships as a single DLL. -->
+    <PackageReference Include="MediaBrowser.Server.Core" Version="4.9.1.90" ExcludeAssets="runtime" />
+    <PackageReference Include="System.IO.Pipelines" Version="8.0.0" ExcludeAssets="runtime" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="..\..\assets\thumb.png" LogicalName="Emby.Plugin.RdZurg.thumb.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Emby.Plugin.RdZurg.Tests" />
+  </ItemGroup>
+
+</Project>
