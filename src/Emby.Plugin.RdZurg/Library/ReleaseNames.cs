@@ -40,9 +40,9 @@ public sealed class ReleaseNames
     private const int ExpectedEpisodeGuards = 3;
     private const int ExpectedMultipleEpisodeGuards = 8;
 
-    // "Show Season 1 Episode 2", "Show (2025) Season 1 Episode 2- Title", "Season 01 Episode 01 & 02".
+    // "Show Season 1 Episode 2", "Show (2025) Season 1 Episode 2- Title", "Season 01 Episode 01 & 02", "Season 4 E14".
     private const string SpelledOut =
-        @".*(\\|\/)(?<seriesname>[^\\\/]*?)[\s._-]*\bSeasons?[\s._-]*(?<seasonnumber>\d{1,4})[\s._-]*Episode[\s._-]*(?<epnumber>\d{1,4})(?:(?:\s*&\s*|\s+and\s+|-)(?<endingepnumber>\d{1,3})(?![0-9]))?[^\\\/]*$";
+        @".*(\\|\/)(?<seriesname>[^\\\/]*?)[\s._-]*\bSeasons?[\s._-]*(?<seasonnumber>\d{1,4})[\s._-]*(?:Episode|Ep|E)[\s._-]*(?<epnumber>\d{1,4})(?:(?:\s*&\s*|\s+and\s+|-)(?<endingepnumber>\d{1,3})(?![0-9]))?[^\\\/]*$";
 
     // What is left of a name that was only an episode marker, such as "S01" or "1x".
     // A series called "24", "1923" or "911" is all digits, so a marker must carry its S, x or E.
