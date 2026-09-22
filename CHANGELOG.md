@@ -18,3 +18,6 @@ playback from a signed route inside Emby.
   Emby matches nothing against.
 - Titles that differ only in case ("One More Shot" and "One more shot") publish into one folder spelling, the one
   already on disk if there is one. Emby groups versions only when each file starts with the folder's name.
+- A pass over an unchanged account asks Real-Debrid about nothing. The videos a torrent holds besides its film
+  or its episodes (featurettes, samples, a collection's other films) were remembered nowhere, so every such
+  torrent cost a detail call on every pass.

@@ -132,13 +132,42 @@ public sealed class LibrarySyncTests : IDisposable
         Assert.Equal(0, result.FilesDeleted);
         Assert.Equal(times, Times(tree));
 
-        // Only the four torrents whose file list and links disagree are asked about again; the capture recorded
-        // exactly which ones those are.
-        Assert.Equal(119, result.TorrentsAlreadyKnown);
-        Assert.Equal(4, result.DetailCalls);
-        Assert.Equal(
-            FakeAccount.PartialTorrents("rd-library-1.0.2.0.json").OrderBy(id => id, StringComparer.Ordinal),
-            account.Detailed.Skip(detailCalls).OrderBy(id => id, StringComparer.Ordinal));
+        // Nothing is asked about again. The capture's four "partialTorrents" are not partial at all - their file
+        // lists and links agree - but films that carry more than one video: featurettes, a sample, a collection.
+        // The videos that were not the film were remembered nowhere, so each of the four cost a detail call on
+        // every pass, forever.
+        Assert.Equal(123, result.TorrentsAlreadyKnown);
+        Assert.Equal(0, result.DetailCalls);
+        Assert.Equal(detailCalls, account.DetailCalls);
+    }
+
+    /// <summary>
+    /// A video left unpublished beside one torrent's film can be another torrent's film: Real-Debrid gives identical
+    /// bytes one link key, so a film inside a collection and the same film released on its own share it. Remembering
+    /// the collection's extra must not stop the single release from being read, even when it arrives later.
+    /// </summary>
+    [Fact]
+    public async Task AnExtraOfOneTorrentIsStillAnotherTorrentsFilm()
+    {
+        var (sync, account, options, tree, ledger, path) = Full();
+        account.Keep("RV6ZPWORDED5Z");
+        var first = await sync.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        ledger.Save(path);
+        Assert.Equal(1, first.FilesWritten);
+
+        // The collection publishes its biggest file only; take the next biggest film as a release of its own.
+        var (reloadedKey, reloadedFile) = account.SelectedFiles("RV6ZPWORDED5Z")
+            .Where(f => ReleaseNames.IsVideo(f.Path) && !tree.Published().Values.Any(v => StreamUrls.KeyOf(v) == f.Key))
+            .OrderByDescending(f => f.Bytes)
+            .Select(f => (f.Key, f.Path))
+            .First();
+        account.AddSingleFileTorrent("SINGLERELEASE", reloadedFile, account.SelectedFiles("RV6ZPWORDED5Z").First(f => f.Key == reloadedKey));
+
+        var (second, _) = Continue(account, path);
+        var result = await second.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+
+        Assert.Equal(1, result.FilesWritten);
+        Assert.Contains(tree.Published().Values, v => StreamUrls.KeyOf(v) == reloadedKey);
     }
 
     [Fact]

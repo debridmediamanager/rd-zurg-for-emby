@@ -167,16 +167,41 @@ public sealed class Ledger
     public bool Knows(string key) => _byKey.ContainsKey(key);
 
     /// <summary>
-    /// Reports whether nothing more needs to be asked about a link.
+    /// Reports whether the sync has placed a link: published with everything known about it, or deliberately not
+    /// published because the same release is already.
     /// </summary>
     /// <param name="key">The content key.</param>
-    /// <returns>Whether the entry is complete.</returns>
+    /// <returns>Whether the link needs no further decision.</returns>
     /// <remarks>
     /// An entry rebuilt from the tree knows where its file is but not how big the release was, and the size is
     /// what recognises the same release re-added under another hash. Such an entry costs one more detail call.
+    /// A link only ignored is not placed: a video left unpublished beside one torrent's film can be another's film.
     /// </remarks>
-    public bool IsSettled(string key)
-        => _byKey.TryGetValue(key, out var entry) && (entry.Outcome != LedgerOutcome.Published || entry.Bytes > 0);
+    public bool IsPlaced(string key)
+        => _byKey.TryGetValue(key, out var entry)
+            && (entry.Outcome == LedgerOutcome.Duplicate || (entry.Outcome == LedgerOutcome.Published && entry.Bytes > 0));
+
+    /// <summary>Reports whether nothing more needs to be asked about a torrent.</summary>
+    /// <param name="torrentId">The torrent.</param>
+    /// <param name="keys">The content keys of its links.</param>
+    /// <returns>Whether every link has been decided on for this torrent.</returns>
+    /// <remarks>
+    /// Real-Debrid gives identical bytes one link key, so a film that another torrent carries as a mere extra - a
+    /// collection holds it beside a bigger one - arrives with its only link already remembered. That settles the
+    /// torrent only once something in it is placed, or when every video in it was left aside for this torrent.
+    /// </remarks>
+    public bool IsSettled(string torrentId, IReadOnlyCollection<string> keys)
+    {
+        ArgumentNullException.ThrowIfNull(keys);
+        var entries = keys.Select(Find).ToList();
+        if (entries.Any(e => e is null || (e.Outcome == LedgerOutcome.Published && e.Bytes <= 0)))
+        {
+            return false;
+        }
+
+        return entries.Any(e => e!.Outcome != LedgerOutcome.Ignored)
+            || entries.All(e => string.Equals(e!.TorrentId, torrentId, StringComparison.Ordinal) || !ReleaseNames.IsVideo(e.File));
+    }
 
     /// <summary>Finds what is published at a path.</summary>
     /// <param name="path">A path relative to the tree root.</param>

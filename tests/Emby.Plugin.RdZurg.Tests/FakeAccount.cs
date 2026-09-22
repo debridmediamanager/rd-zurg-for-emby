@@ -53,16 +53,44 @@ internal sealed class FakeAccount : HttpMessageHandler
     /// <param name="ids">The torrents to keep.</param>
     public void Keep(params string[] ids) => Torrents.RemoveAll(t => !ids.Contains(Id(t)));
 
-    /// <summary>The torrents the capture recorded as having more links than selected files.</summary>
-    /// <param name="fixture">The fixture name.</param>
-    /// <returns>Their ids.</returns>
-    public static IReadOnlyList<string> PartialTorrents(string fixture)
+    public static string Id(JsonElement torrent) => torrent.GetProperty("id").GetString()!;
+
+    /// <summary>A recorded torrent's selected files, each with the link key it was given.</summary>
+    /// <param name="id">The torrent id.</param>
+    /// <returns>The files.</returns>
+    public IReadOnlyList<(string Key, string Path, long Bytes, string Link)> SelectedFiles(string id)
     {
-        using var document = JsonDocument.Parse(Fixture.Text(fixture));
-        return document.RootElement.GetProperty("partialTorrents").EnumerateArray().Select(t => t.GetString()!).ToList();
+        var info = _info[id];
+        var links = info.GetProperty("links").EnumerateArray().Select(l => l.GetString()!).ToList();
+        return info.GetProperty("files").EnumerateArray()
+            .Where(f => f.GetProperty("selected").GetInt32() == 1)
+            .Select((f, i) => (RealDebrid.RealDebridClient.LinkKey(links[i]), f.GetProperty("path").GetString()!, f.GetProperty("bytes").GetInt64(), links[i]))
+            .ToList();
     }
 
-    public static string Id(JsonElement torrent) => torrent.GetProperty("id").GetString()!;
+    /// <summary>
+    /// Adds a torrent holding one recorded file on its own, as Real-Debrid lists the same bytes released alone: under
+    /// the same link key.
+    /// </summary>
+    /// <param name="id">The new torrent's id.</param>
+    /// <param name="path">The file's path, which names the release.</param>
+    /// <param name="file">The recorded file.</param>
+    public void AddSingleFileTorrent(string id, string path, (string Key, string Path, long Bytes, string Link) file)
+    {
+        var name = System.IO.Path.GetFileName(path);
+        var listing = JsonSerializer.Serialize(new { id, filename = name, bytes = file.Bytes, status = "downloaded", links = new[] { file.Link } });
+        var info = JsonSerializer.Serialize(new
+        {
+            id,
+            filename = name,
+            bytes = file.Bytes,
+            status = "downloaded",
+            files = new[] { new { id = 1, path = "/" + name, bytes = file.Bytes, selected = 1 } },
+            links = new[] { file.Link },
+        });
+        Torrents.Insert(0, JsonDocument.Parse(listing).RootElement.Clone());
+        _info[id] = JsonDocument.Parse(info).RootElement.Clone();
+    }
 
     protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
     {

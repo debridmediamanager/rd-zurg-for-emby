@@ -151,7 +151,7 @@ public sealed class LibrarySync
 
             // The listing already carries the links, so recognising a torrent costs nothing. Links the parser
             // had no place for are remembered as well, or every pass would re-query the same torrents.
-            if (torrent.Links.Select(RealDebridClient.LinkKey).All(_ledger.IsSettled))
+            if (_ledger.IsSettled(torrent.Id, torrent.Links.Select(RealDebridClient.LinkKey).ToList()))
             {
                 result.TorrentsAlreadyKnown++;
                 continue;
@@ -227,9 +227,9 @@ public sealed class LibrarySync
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            foreach (var (file, key) in files.Where(p => !ReleaseNames.IsVideo(p.File.Path) && !_ledger.Knows(p.Key)))
+            foreach (var (file, key) in files.Where(p => !ReleaseNames.IsVideo(p.File.Path)))
             {
-                _ledger.Put(new LedgerEntry { Key = key, TorrentId = info.Id, File = file.Path, Bytes = file.Bytes, Outcome = LedgerOutcome.Ignored });
+                Ignore(info.Id, file, key);
             }
 
             var videos = files
@@ -251,9 +251,16 @@ public sealed class LibrarySync
 
             if (episodes.Count > 0)
             {
+                // A pack's featurettes and samples have no place in it, and are remembered so the pack is not read
+                // again next pass.
+                foreach (var (file, key) in videos.Where(v => !episodes.Any(e => string.Equals(e.Key, v.Key, StringComparison.Ordinal))))
+                {
+                    Ignore(info.Id, file, key);
+                }
+
                 foreach (var (file, key, episode) in episodes)
                 {
-                    if (_ledger.IsSettled(key))
+                    if (_ledger.IsPlaced(key))
                     {
                         continue;
                     }
@@ -273,8 +280,15 @@ public sealed class LibrarySync
                 continue;
             }
 
+            // Only the biggest video is the film; the rest (featurettes, a sample, a collection's other films) are
+            // remembered so the torrent is not read again next pass.
             var primary = videos[0];
-            if (_ledger.IsSettled(primary.Key))
+            foreach (var (file, key) in videos.Skip(1))
+            {
+                Ignore(info.Id, file, key);
+            }
+
+            if (_ledger.IsPlaced(primary.Key))
             {
                 continue;
             }
@@ -338,6 +352,14 @@ public sealed class LibrarySync
     /// <summary>Rebuilds the ledger from the tree when its own file is gone.</summary>
     /// <returns>How many entries were recovered.</returns>
     public int RecoverLedger() => _ledger.RebuildFromTree(_tree.Root, StreamUrls.KeyOf, StreamUrls.FileNameOf);
+
+    private void Ignore(string torrentId, RdFile file, string key)
+    {
+        if (!_ledger.Knows(key))
+        {
+            _ledger.Put(new LedgerEntry { Key = key, TorrentId = torrentId, File = file.Path, Bytes = file.Bytes, Outcome = LedgerOutcome.Ignored });
+        }
+    }
 
     private static string Url(string baseUrl, PluginOptions options, string accountId, string key, string fileName)
         => LinkResolver.BuildUrl(baseUrl, key, fileName, options.StreamSecret, accountId);
