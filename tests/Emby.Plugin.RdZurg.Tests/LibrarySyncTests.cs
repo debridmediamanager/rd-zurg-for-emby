@@ -416,6 +416,120 @@ public sealed class LibrarySyncTests : IDisposable
         Assert.Equal(0, result.Collisions);
     }
 
+    /// <summary>
+    /// A copy held back because the same release was already published takes its place when that one goes. Nothing
+    /// asked about it again before, so removing the torrent that happened to be published first took the release
+    /// out of the library although the account still held it three more times.
+    /// </summary>
+    [Fact]
+    public async Task ACopyTakesOverWhenThePublishedOneGoes()
+    {
+        var (sync, account, options, tree, ledger, path) = Full(Copies);
+        await sync.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        ledger.Save(path);
+        var before = tree.Published();
+
+        var supergirl = before.Single(p => p.Key.Contains("Supergirl", StringComparison.Ordinal));
+        var lateNight = before.Single(p => p.Key.Contains("Late Night", StringComparison.OrdinalIgnoreCase));
+        var gone = new[] { StreamUrls.KeyOf(supergirl.Value), StreamUrls.KeyOf(lateNight.Value) };
+        account.Remove(t => t.GetProperty("links").EnumerateArray().Any(l => gone.Contains(RealDebridClient.LinkKey(l.GetString()!))));
+
+        var (second, secondLedger) = Continue(account, path);
+        var result = await second.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        secondLedger.Save(path);
+
+        // Same paths, so Emby keeps the items and what it knows about them; only the URL inside changed.
+        var after = tree.Published();
+        Assert.Equal(before.Keys.OrderBy(k => k, StringComparer.Ordinal), after.Keys.OrderBy(k => k, StringComparer.Ordinal));
+        Assert.NotEqual(supergirl.Value, after[supergirl.Key]);
+        Assert.NotEqual(lateNight.Value, after[lateNight.Key]);
+        Assert.Equal(2, result.FilesRewritten);
+        Assert.Equal(0, result.FilesDeleted);
+
+        // And the pass after that is quiet again.
+        var (third, _) = Continue(account, path);
+        var calls = account.DetailCalls;
+        var again = await third.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        Assert.Equal(0, again.FilesWritten + again.FilesRewritten + again.FilesDeleted);
+        Assert.Equal(calls, account.DetailCalls);
+    }
+
+    /// <summary>
+    /// The account holds 109 releases of The Matrix, and Emby groups eight. When one of the eight goes, the largest
+    /// of the releases held back takes its place; before, they were written off for good and the folder shrank.
+    /// </summary>
+    [Fact]
+    public async Task AReleaseHeldBackByTheCapFillsAGap()
+    {
+        var (sync, account, options, tree, ledger, path) = Full();
+        await sync.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        ledger.Save(path);
+
+        var full = tree.Published().Where(p => p.Key.StartsWith(StrmPaths.Movies + "/", StringComparison.Ordinal))
+            .GroupBy(p => p.Key[..p.Key.LastIndexOf('/')], StringComparer.OrdinalIgnoreCase)
+            .First(g => g.Count() == StrmPaths.MaxVersions);
+        var smallest = full.Select(p => ledger.AtPath(p.Key)!).OrderBy(e => e.Bytes).First();
+        account.Remove(t => t.GetProperty("links").EnumerateArray().Any(l => RealDebridClient.LinkKey(l.GetString()!) == smallest.Key));
+
+        var (second, secondLedger) = Continue(account, path);
+        var result = await second.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        secondLedger.Save(path);
+
+        var folder = tree.Published().Keys.Where(p => p.StartsWith(full.Key + "/", StringComparison.OrdinalIgnoreCase)).ToList();
+        Assert.Equal(StrmPaths.MaxVersions, folder.Count);
+        Assert.Equal(1, result.FilesDeleted);
+        Assert.Equal(1, result.FilesWritten);
+
+        // The pass after that writes nothing and asks nothing.
+        var (third, _) = Continue(account, path);
+        var calls = account.DetailCalls;
+        var again = await third.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        Assert.Equal(0, again.FilesWritten + again.FilesRewritten + again.FilesDeleted);
+        Assert.Equal(calls, account.DetailCalls);
+    }
+
+    /// <summary>
+    /// A pass that may not delete - "Remove vanished items" off, or a torrent limit - leaves a vanished version's file
+    /// where it is, so that file still fills one of the folder's eight places. Counting only what the listing showed,
+    /// a new release took the place as well and the folder held nine, past which Emby groups nothing.
+    /// </summary>
+    [Fact]
+    public async Task AFolderNeverHoldsMoreThanTheCapWhenAPassMayNotDelete()
+    {
+        var (sync, account, options, tree, ledger, path) = Full();
+        var everything = account.Torrents.ToList();
+
+        // Hold back one release of a film that fills its folder, one big enough to be kept once it arrives.
+        var (probeSync, probeAccount, _, probeTree, probeLedger, _) = Full();
+        await probeSync.RunAsync(options, BaseUrl, probeAccount.AccountId, null, CancellationToken.None);
+        var folder = probeTree.Published().Keys
+            .GroupBy(p => p[..p.LastIndexOf('/')], StringComparer.OrdinalIgnoreCase)
+            .First(g => g.Count() == StrmPaths.MaxVersions);
+        var kept = folder.Select(p => probeLedger.AtPath(p)!).OrderByDescending(e => e.Bytes).ToList();
+        // Its link has to be its own: 16 releases in this account are there twice under one key.
+        var arriving = kept.First(e => account.Torrents.Count(t => t.GetProperty("links").EnumerateArray()
+            .Any(l => RealDebridClient.LinkKey(l.GetString()!) == e.Key)) == 1);
+        var vanishing = kept[^1];
+        Directory.Delete(_root, true);
+        tree.Ensure();
+        account.Remove(t => FakeAccount.Id(t) == arriving.TorrentId);
+        await sync.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        ledger.Save(path);
+        Assert.Equal(StrmPaths.MaxVersions, InFolder(tree, folder.Key));
+
+        options.RemoveVanishedItems = false;
+        account.Torrents.Clear();
+        account.Torrents.AddRange(everything.Where(t => FakeAccount.Id(t) != vanishing.TorrentId));
+        var (second, _) = Continue(account, path);
+        var result = await second.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+
+        Assert.True(result.FilesWritten + result.FilesRewritten + result.Capped > 0, result.ToString());
+        Assert.Equal(StrmPaths.MaxVersions, InFolder(tree, folder.Key));
+    }
+
+    private static int InFolder(StrmTree tree, string folder)
+        => tree.Published().Keys.Count(p => p.StartsWith(folder + "/", StringComparison.OrdinalIgnoreCase));
+
     private static void AssertOneSpellingPerFolder(IEnumerable<string> paths)
     {
         var split = paths.Select(p => p.Split('/')).ToList();

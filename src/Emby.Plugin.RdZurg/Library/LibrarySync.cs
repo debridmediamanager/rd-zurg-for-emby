@@ -121,18 +121,52 @@ public sealed class LibrarySync
         var owners = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var sizes = new Dictionary<string, long>(StringComparer.OrdinalIgnoreCase);
 
+        // Only a complete listing proves that a torrent is gone.
+        var mayDelete = options.RemoveVanishedItems && options.MaxTorrents == 0;
+
         // Everything already published and still live keeps its path; only the URL is rebuilt, so a changed
-        // signing key or account rewrites the file and nothing moves.
-        foreach (var entry in _ledger.Published.Where(e => live.Contains(e.Key)).ToList())
+        // signing key or account rewrites the file and nothing moves. A pass that may not delete keeps the rest
+        // too: those files stay on disk whatever this pass decides, so they still fill their folder's versions and
+        // still stand for their release.
+        var pinned = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var entry in _ledger.Published.Where(e => mayDelete ? live.Contains(e.Key) : e.Path.Length > 0).ToList())
         {
             desired[entry.Path] = Url(baseUrl, options, accountId, entry.Key, entry.File);
             owners[entry.Path] = entry.Key;
             sizes[entry.Path] = entry.Bytes;
+            if (!mayDelete)
+            {
+                pinned.Add(entry.Path);
+            }
         }
 
         var fingerprints = new HashSet<string>(
-            _ledger.Published.Where(e => live.Contains(e.Key)).Select(e => e.Fingerprint),
+            _ledger.Published.Where(e => desired.ContainsKey(e.Path)).Select(e => e.Fingerprint),
             StringComparer.OrdinalIgnoreCase);
+
+        // A release the version cap held back stays a candidate for as long as it is live, at the path it would
+        // have had; the cap decides again below, so when one of the kept versions goes the largest of these takes
+        // its place without its torrent being read again.
+        foreach (var entry in _ledger.Entries.Where(e => e.Outcome == LedgerOutcome.Capped && e.Path.Length > 0 && live.Contains(e.Key)).ToList())
+        {
+            if (owners.TryAdd(entry.Path, entry.Key))
+            {
+                desired[entry.Path] = Url(baseUrl, options, accountId, entry.Key, entry.File);
+                sizes[entry.Path] = entry.Bytes;
+            }
+        }
+
+        // Whether a decision still stands. A copy was held back for a release that was published; once that one is
+        // gone the copy's torrent is read again and the copy takes its place.
+        bool Placed(LedgerEntry entry) => entry.Outcome switch
+        {
+            LedgerOutcome.Published => entry.Bytes > 0,
+            LedgerOutcome.Duplicate => fingerprints.Contains(entry.Fingerprint),
+            LedgerOutcome.Capped => true,
+            _ => false,
+        };
+
+        bool IsPlaced(string key) => _ledger.Find(key) is { } entry && Placed(entry);
 
         // Collected first, decided second: a ledger rebuilt from the tree knows no sizes, and sizes are what
         // recognise a re-added release, so every detail this pass sees has to be in hand before anything is
@@ -151,7 +185,7 @@ public sealed class LibrarySync
 
             // The listing already carries the links, so recognising a torrent costs nothing. Links the parser
             // had no place for are remembered as well, or every pass would re-query the same torrents.
-            if (_ledger.IsSettled(torrent.Id, torrent.Links.Select(RealDebridClient.LinkKey).ToList()))
+            if (_ledger.IsSettled(torrent.Id, torrent.Links.Select(RealDebridClient.LinkKey).ToList(), Placed))
             {
                 result.TorrentsAlreadyKnown++;
                 continue;
@@ -260,7 +294,7 @@ public sealed class LibrarySync
 
                 foreach (var (file, key, episode) in episodes)
                 {
-                    if (_ledger.IsPlaced(key))
+                    if (IsPlaced(key))
                     {
                         continue;
                     }
@@ -298,7 +332,7 @@ public sealed class LibrarySync
                 Ignore(info.Id, file, key);
             }
 
-            if (_ledger.IsPlaced(primary.Key))
+            if (IsPlaced(primary.Key))
             {
                 continue;
             }
@@ -334,12 +368,10 @@ public sealed class LibrarySync
         }
 
         progress?.Report(88);
-        result.Capped = Cap(desired, owners, sizes);
+        result.Capped = Cap(desired, owners, sizes, pinned);
 
         progress?.Report(92);
 
-        // Only a complete listing proves that a torrent is gone.
-        var mayDelete = options.RemoveVanishedItems && options.MaxTorrents == 0;
         var changes = _tree.Apply(desired, mayDelete, options.AllowLargeCleanup);
         result.FilesWritten = changes.Written;
         result.FilesRewritten = changes.Rewritten;
@@ -349,7 +381,8 @@ public sealed class LibrarySync
 
         if (mayDelete && !changes.CleanupRefused)
         {
-            foreach (var entry in _ledger.Published.Where(e => !desired.ContainsKey(e.Path)).ToList())
+            // A complete listing says which links are gone, whatever became of them.
+            foreach (var entry in _ledger.Entries.Where(e => !live.Contains(e.Key)).ToList())
             {
                 _ledger.Remove(entry.Key);
             }
@@ -442,38 +475,50 @@ public sealed class LibrarySync
     /// Past the cap Emby stops grouping altogether and shows every file as its own film; the account measured for
     /// this had 109 releases of The Matrix. The largest are kept, which is also what a viewer would pick.
     /// </remarks>
-    private int Cap(Dictionary<string, string> desired, Dictionary<string, string> owners, Dictionary<string, long> sizes)
+    private int Cap(Dictionary<string, string> desired, Dictionary<string, string> owners, Dictionary<string, long> sizes, HashSet<string> pinned)
     {
         var capped = 0;
         var folders = desired.Keys
             .Where(p => p.StartsWith(StrmPaths.Movies + "/", StringComparison.OrdinalIgnoreCase))
             .GroupBy(p => p[..p.LastIndexOf('/')], StringComparer.OrdinalIgnoreCase)
-            .Where(g => g.Count() > StrmPaths.MaxVersions);
+            .ToList();
 
         foreach (var folder in folders)
         {
-            var extra = folder
-                .OrderByDescending(p => sizes.TryGetValue(p, out var bytes) ? bytes : 0)
+            // A file this pass may not delete keeps its place, or the folder would end up holding more than the cap.
+            var ranked = folder
+                .OrderByDescending(pinned.Contains)
+                .ThenByDescending(p => sizes.TryGetValue(p, out var bytes) ? bytes : 0)
                 .ThenBy(p => p, StringComparer.Ordinal)
-                .Skip(StrmPaths.MaxVersions)
                 .ToList();
 
-            foreach (var path in extra)
+            // A release the cap held back before and now fits is published again.
+            foreach (var entry in ranked.Take(StrmPaths.MaxVersions).Select(_ledger.AtPath).Where(e => e is { Outcome: LedgerOutcome.Capped }))
+            {
+                entry!.Outcome = LedgerOutcome.Published;
+                _ledger.Put(entry);
+            }
+
+            var newlyCapped = 0;
+            foreach (var path in ranked.Skip(StrmPaths.MaxVersions))
             {
                 var entry = _ledger.AtPath(path);
                 desired.Remove(path);
                 owners.Remove(path);
-                if (entry is not null)
+                if (entry is not null && entry.Outcome != LedgerOutcome.Capped)
                 {
-                    entry.Path = string.Empty;
-                    entry.Outcome = LedgerOutcome.Duplicate;
+                    entry.Outcome = LedgerOutcome.Capped;
                     _ledger.Put(entry);
+                    newlyCapped++;
                 }
 
                 capped++;
             }
 
-            _logger.Info("RD zurg: {0} holds more releases than Emby groups; keeping the {1} largest", folder.Key, StrmPaths.MaxVersions);
+            if (newlyCapped > 0)
+            {
+                _logger.Info("RD zurg: {0} holds more releases than Emby groups; keeping the {1} largest", folder.Key, StrmPaths.MaxVersions);
+            }
         }
 
         return capped;

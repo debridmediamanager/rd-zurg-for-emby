@@ -24,3 +24,9 @@ playback from a signed route inside Emby.
 - A copy of an episode is published once. Real-Debrid now gives a re-added release fresh link keys, so only the
   name and size recognise a copy; films were checked that way, episodes were not, and each copy became one more
   version of the same episode.
+- A release held back comes back when the reason is gone. A copy held back because the same release was
+  already published takes its place, in place, when that torrent is removed; and when one of a film's eight
+  versions goes, the largest release the cap held back fills the gap. Both used to be written off for good.
+- A folder never holds more than eight versions. A pass that may not delete (a torrent limit, or "Remove
+  vanished items" off) left a vanished version's file in place but did not count it, so a new release made
+  nine and Emby stopped grouping the film.
