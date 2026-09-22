@@ -81,7 +81,7 @@ public class ParserCorpusTests
             var year = ReleaseNames.ParseName(ReleaseNames.Humanise(name)).Year;
             if (year is int value && !System.Text.RegularExpressions.Regex.IsMatch(
                     name,
-                    FormattableString.Invariant($"(?<![0-9]){value}(?![0-9]|[xX][0-9]{{3,4}}(?![0-9]))")))
+                    FormattableString.Invariant($"(?<![0-9]){value}(?![0-9]|[xX](?:[6-9][0-9]{{2}}|[1-9][0-9]{{3}})(?![0-9]))")))
             {
                 wrong.Add(FormattableString.Invariant($"{value}  <=  {name}"));
             }

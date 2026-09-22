@@ -92,13 +92,18 @@ public sealed class ReleaseNames
         + "telesync|ts|telecine|tc|brrip|bdrip|480p|480i|576p|576i|720p|720i|1080p|1080i|2160p|hrhd|hrhdtv|hddvd|bluray|"
         + "blu-ray|x264|x265|h264|h265|xvid|xvidvd|xxx|www.www|aac";
 
+    // An x and a frame's height, 600 to 9999. A lower number after a year-shaped width is not a frame: a codec in
+    // "Rang De Basanti 2006x264", a season and episode in "Formula.1.2025x126". The lowest real height behind such a
+    // width in DMM's names is 696.
+    private const string FrameHeight = @"[xX](?:[6-9][0-9]{2}|[1-9][0-9]{3})(?![0-9])";
+
     // The year is the last 19xx/20xx that has a title in front of it and is not part of a longer number or a date.
     // A year right after punctuation wins over one after a space, so "1990-1994 2024" reads as 1994. A resolution
     // is not a year: "[BDRip 1920x1080 HEVC]" would otherwise file a release as a 1920 film.
     private static readonly Regex[] _years =
     {
-        new(@"^(?<name>.+[^_,.()\[\]\-])[_.()\[\]\-](?<year>(?:19|20)[0-9]{2})(?![0-9]|[xX][0-9]{3,4}(?![0-9])|\W[0-9]{2}\W[0-9]{2})", Options),
-        new(@"^(?<name>.+[^_,.()\[\]\-])[ _.()\[\]\-]+(?<year>(?:19|20)[0-9]{2})(?![0-9]|[xX][0-9]{3,4}(?![0-9])|\W[0-9]{2}\W[0-9]{2})", Options),
+        new(@"^(?<name>.+[^_,.()\[\]\-])[_.()\[\]\-](?<year>(?:19|20)[0-9]{2})(?![0-9]|" + FrameHeight + @"|\W[0-9]{2}\W[0-9]{2})", Options),
+        new(@"^(?<name>.+[^_,.()\[\]\-])[ _.()\[\]\-]+(?<year>(?:19|20)[0-9]{2})(?![0-9]|" + FrameHeight + @"|\W[0-9]{2}\W[0-9]{2})", Options),
     };
 
     // Applied in order and cumulatively, each result trimmed.

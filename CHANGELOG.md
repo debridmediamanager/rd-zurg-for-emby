@@ -16,6 +16,9 @@ playback from a signed route inside Emby.
 
 - A resolution is no longer read as a year: `[BDRip 1920x1080 HEVC]` filed a release as a 1920 film, a folder
   Emby matches nothing against.
+- A year written against a codec or an episode number is kept. A year followed by an `x` and three or four digits
+  was taken for a frame width and dropped, so `Rang De Basanti 2006x264` and `Mini-Skirt Gang[1974x264` were
+  filed with no year. Only a height of 600 or more makes a frame now. The lowest real one in DMM's names is 696.
 - Titles that differ only in case ("One More Shot" and "One more shot") publish into one folder spelling, the one
   already on disk if there is one. Emby groups versions only when each file starts with the folder's name.
 - A pass over an unchanged account asks Real-Debrid about nothing. The videos a torrent holds besides its film
