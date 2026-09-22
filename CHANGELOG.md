@@ -11,3 +11,8 @@ playback from a signed route inside Emby.
 - Playback: signed URLs, byte ranges, HEAD, stored-RAR members, and a CDN answer that is checked
   before any header is sent.
 - Libraries are created with everything that would open a stream turned off.
+
+### Fixed since the first validation build (`fb0d022`)
+
+- A resolution is no longer read as a year: `[BDRip 1920x1080 HEVC]` filed a release as a 1920 film, a folder
+  Emby matches nothing against.

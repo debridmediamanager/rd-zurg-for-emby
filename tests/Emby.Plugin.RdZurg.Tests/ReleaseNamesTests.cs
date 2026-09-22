@@ -98,6 +98,34 @@ public class ReleaseNamesTests
         Assert.Equal(episode, parsed.EpisodeNumber);
     }
 
+    /// <summary>
+    /// A resolution is not a year. The two corpus releases carry <c>1920x1080</c> in their names and the AllDebrid
+    /// test account holds the Evangelion one; before the guard each read as a 1920 film, which names a folder Emby
+    /// searches TMDB with for a film from 1920 and matches nothing.
+    /// </summary>
+    [Theory]
+    [InlineData("[Arid] Samurai Champloo [Dual-Audio][BDRip 1920x1080 HEVC FLAC]", null)]
+    [InlineData("Pokemon S19 - AMZN WEB-DL 1920x1080 FR [ABYSS]", null)]
+    [InlineData("[Beatrice-Raws] Evangelion 1.0 You Are (Not) Alone [BDRip 1920x1080 HEVC FLAC]", null)]
+    [InlineData("Some.Release.2019.1920x1080.mkv", 2019)]
+    [InlineData("Some.Release.1080p.2019.mkv", 2019)]
+    [InlineData("Blade.Runner.2049.2017.3840x2160.mkv", 2017)]
+    public void DoesNotReadAResolutionAsAYear(string name, int? year)
+    {
+        Assert.Equal(year, ReleaseNames.ParseName(ReleaseNames.Humanise(name)).Year);
+    }
+
+    [Fact]
+    public void AFilmWithAResolutionIsFiledUnderItsTitle()
+    {
+        var (title, year) = ReleaseNames.MovieTitle(
+            "/[Beatrice-Raws] Evangelion 1.0 You Are (Not) Alone [BDRip 1920x1080 HEVC FLAC].mkv",
+            "[Beatrice-Raws] Evangelion 1.0 You Are (Not) Alone [BDRip 1920x1080 HEVC FLAC]");
+
+        Assert.Null(year);
+        Assert.StartsWith("Evangelion 1 0 You Are (Not) Alone [", StrmPaths.MovieFolder(title, year, "ABCDEFGHIJKLM"), System.StringComparison.Ordinal);
+    }
+
     [Theory]
     [InlineData("/Some.Release.mkv", true)]
     [InlineData("/Some.Release.mp4", true)]

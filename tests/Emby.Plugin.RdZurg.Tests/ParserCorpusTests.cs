@@ -62,6 +62,35 @@ public class ParserCorpusTests
         Assert.True(wrong.Count == 0, $"{wrong.Count} of {rows.Count} differ:{Environment.NewLine}{string.Join(Environment.NewLine, wrong.Take(40))}");
     }
 
+    /// <summary>
+    /// No name in the corpus reads a resolution such as <c>1920x1080</c> as its year. The film-year assertion above
+    /// never saw the shape: the two corpus rows carrying it are series, whose folder is named without a year, so
+    /// every name in the corpus is read here as a film would be - the release and the file alike.
+    /// </summary>
+    [Fact]
+    public void NeverReadsAResolutionAsAYear()
+    {
+        var names = Fixture.Tsv("episode-corpus.tsv.gz").SelectMany(r => new[] { r[0], System.IO.Path.GetFileNameWithoutExtension(r[1]) })
+            .Concat(Fixture.Tsv("parse-golden.tsv.gz").SelectMany(r => new[] { r[2], System.IO.Path.GetFileNameWithoutExtension(r[3]) }))
+            .Distinct(StringComparer.Ordinal)
+            .ToList();
+
+        var wrong = new List<string>();
+        foreach (var name in names)
+        {
+            var year = ReleaseNames.ParseName(ReleaseNames.Humanise(name)).Year;
+            if (year is int value && !System.Text.RegularExpressions.Regex.IsMatch(
+                    name,
+                    FormattableString.Invariant($"(?<![0-9]){value}(?![0-9]|[xX][0-9]{{3,4}}(?![0-9]))")))
+            {
+                wrong.Add(FormattableString.Invariant($"{value}  <=  {name}"));
+            }
+        }
+
+        Assert.True(names.Count > 11000, $"only {names.Count} names");
+        Assert.True(wrong.Count == 0, $"{wrong.Count} read a resolution as a year:{Environment.NewLine}{string.Join(Environment.NewLine, wrong.Take(20))}");
+    }
+
     [Fact]
     public void ReadsSeriesNamesAsJellyfinDidOnTheRealLibrary()
     {
