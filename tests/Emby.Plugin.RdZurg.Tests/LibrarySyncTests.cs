@@ -313,15 +313,81 @@ public sealed class LibrarySyncTests : IDisposable
         Assert.Equal(published.Key, StreamUrls.KeyOf(tree.Read(published.Path)));
     }
 
+    /// <summary>
+    /// The test account holds "One More Shot" and "One more shot", "Love in Slow Motion" and "Love in slow motion",
+    /// and "House Of The Dragon" beside "House of the Dragon". Emby groups a folder's files as versions of one item
+    /// only when each file starts with the folder's name, so two spellings are two items on a case-sensitive
+    /// filesystem, and on a case-insensitive one a folder whose files disagree with it. Asserted on the names,
+    /// because a case-insensitive filesystem merges the directories by itself and hides half of this.
+    /// </summary>
+    [Fact]
+    public async Task TitlesDifferingOnlyInCaseShareOneSpelling()
+    {
+        var (sync, account, options, tree, _, _) = Full(CaseVariants);
+        var result = await sync.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+
+        Assert.True(result.FilesWritten >= 8, result.ToString());
+        AssertOneSpellingPerFolder(tree.Published().Keys);
+    }
+
+    /// <summary>
+    /// The same, when the second spelling arrives after the first was published: a published path never moves, so
+    /// the newcomer has to take the spelling already on disk.
+    /// </summary>
+    [Fact]
+    public async Task ALaterReleaseTakesTheSpellingAlreadyPublished()
+    {
+        var (sync, account, options, tree, ledger, path) = Full(CaseVariants);
+        var everything = account.Torrents.ToList();
+
+        // First only one spelling of each: "One more shot", "Love in slow motion", "House Of The Dragon".
+        var later = new[] { "One.More.Shot", "Love.in.Slow.Motion", "House of the Dragon", "House.of.the.Dragon" };
+        account.Remove(t => later.Any(l => t.GetProperty("filename").GetString()!.StartsWith(l, StringComparison.Ordinal)));
+        var first = await sync.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        ledger.Save(path);
+        Assert.True(first.FilesWritten > 0, first.ToString());
+        var before = tree.Published();
+
+        account.Torrents.Clear();
+        account.Torrents.AddRange(everything);
+        var (second, _) = Continue(account, path);
+        var result = await second.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+
+        Assert.True(result.FilesWritten > 0, result.ToString());
+        Assert.Equal(0, result.FilesRewritten);
+        var after = tree.Published();
+        Assert.All(before.Keys, p => Assert.Contains(p, after.Keys));
+        AssertOneSpellingPerFolder(after.Keys);
+    }
+
+    private static void AssertOneSpellingPerFolder(IEnumerable<string> paths)
+    {
+        var split = paths.Select(p => p.Split('/')).ToList();
+
+        var spellings = split
+            .GroupBy(p => p[0] + "/" + p[1], StringComparer.OrdinalIgnoreCase)
+            .Where(g => g.Select(p => p[1]).Distinct(StringComparer.Ordinal).Count() > 1)
+            .Select(g => string.Join(" | ", g.Select(p => p[1]).Distinct(StringComparer.Ordinal)))
+            .ToList();
+        Assert.True(spellings.Count == 0, "more than one spelling: " + string.Join("; ", spellings));
+
+        foreach (var p in split)
+        {
+            Assert.StartsWith(p[1] + " - ", p[^1], StringComparison.Ordinal);
+        }
+    }
+
     private (LibrarySync Sync, FakeAccount Account, PluginOptions Options, StrmTree Tree) Sync()
     {
         var (sync, account, options, tree, _, _) = Full();
         return (sync, account, options, tree);
     }
 
-    private (LibrarySync Sync, FakeAccount Account, PluginOptions Options, StrmTree Tree, Ledger Ledger, string LedgerPath) Full()
+    private const string CaseVariants = "rd-case-variants-2026-09-22.json";
+
+    private (LibrarySync Sync, FakeAccount Account, PluginOptions Options, StrmTree Tree, Ledger Ledger, string LedgerPath) Full(string fixture = "rd-library-1.0.2.0.json")
     {
-        var account = new FakeAccount("rd-library-1.0.2.0.json");
+        var account = new FakeAccount(fixture);
         var options = new PluginOptions { ApiKey = "token", StreamSecret = Secret, AccountId = account.AccountId };
         var tree = new StrmTree(Path.Combine(_root, "rd-zurg"), new FakeLogger());
         tree.Ensure();

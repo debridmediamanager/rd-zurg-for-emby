@@ -1,0 +1,607 @@
+{
+ "source": "The Real-Debrid test account on 2026-09-22, read with GET /torrents and /torrents/info/{id}: every release in its 3,365 torrents whose title appears under two spellings that differ only in case (three films and one series). API answers with link keys, torrent ids and infohashes replaced by stable stand-ins on 2026-09-23.",
+ "listing": [
+  {
+   "id": "AJULICSPB44YZ",
+   "filename": "House of the Dragon (2022) S02E06 (1080p MAX WEB.DL H265 SDR DDP Atmos 5.1 English - HONE).mkv",
+   "hash": "52425fdb5a60af47f674061215f8066d803a5caf",
+   "bytes": 1520040176,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-08-07T02:44:44.000Z",
+   "links": [
+    "https://real-debrid.com/d/WSNORBD5DI7LN4QA"
+   ],
+   "ended": "2026-08-07T02:45:25.000Z"
+  },
+  {
+   "id": "UNFT27SC6KPQB",
+   "filename": "House Of The Dragon S01E09 1080p 10bit CRAV WEB.DL x265 HEVC [ Hindi DDP 2.0 - English DD 5.1 ] ESub ~Ã¢ÂÂRPIT ~PrimeFix.mkv",
+   "hash": "6e963475537773ec53ac74baec9e18ab4d98a113",
+   "bytes": 1516568552,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-08-07T00:29:49.000Z",
+   "links": [
+    "https://real-debrid.com/d/QLYG5TIRB3B2TULI"
+   ],
+   "ended": "2026-08-07T00:30:27.000Z"
+  },
+  {
+   "id": "TLGGJX6XSF5L5",
+   "filename": "One.more.shot.2024.1080p.Netflix.WEB.DL.H.264.EAC3.@TSRG.mkv",
+   "hash": "8f528cae2ab525f013995622e393341bda753f23",
+   "bytes": 4827801801,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-31T21:28:35.000Z",
+   "links": [
+    "https://real-debrid.com/d/RDPRIWYZ6TUCSHPV"
+   ],
+   "ended": "2026-07-31T21:30:06.000Z"
+  },
+  {
+   "id": "KF2U6LX7IV2EB",
+   "filename": "One.More.Shot.2024.1080p.NF.WEB.DL.EN-TR.DDP5.1.H.264-TURG.mkv",
+   "hash": "a5c8c0a2355ef549645850add6b96a72a3372d85",
+   "bytes": 4827678570,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-31T21:16:52.000Z",
+   "links": [
+    "https://real-debrid.com/d/H6TEFPMFK5GVRSBS"
+   ],
+   "ended": "2026-07-31T21:18:49.000Z"
+  },
+  {
+   "id": "OB5UYHHVQOZKF",
+   "filename": "Love.in.Slow.Motion.2026.1080p.NF.WEB.DL.AVC.8bit.AAC.5.1.MultiAudios.ArSub.MultiSubs-Normal1406.mkv",
+   "hash": "3691e47cdb6119ad736bd7c7d960710d3122d4b9",
+   "bytes": 3703814286,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-31T04:16:33.000Z",
+   "links": [
+    "https://real-debrid.com/d/MWPO7DTI4NVU3B4T"
+   ],
+   "ended": "2026-07-31T04:18:05.000Z"
+  },
+  {
+   "id": "OYC6JYDFMAT6L",
+   "filename": "One.More.Shot.2024.1080p.NF.WEB.DL.DDP5.1.H.264-TURG.mkv",
+   "hash": "123bd70f93e7c8d9dee9c0485cf45c34ddb56c5f",
+   "bytes": 4825763776,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T17:59:34.000Z",
+   "links": [
+    "https://real-debrid.com/d/DXSU6VE7ISL5QHVM"
+   ],
+   "ended": "2026-07-28T18:01:11.000Z"
+  },
+  {
+   "id": "GTNK3UDPJH32T",
+   "filename": "Love.in.slow.motion.2026.1080p.Netflix.WEB.DL.H.264.EAC3.@TSRG.mkv",
+   "hash": "d453e139840452f62c9f5ead39d9ea7d06715c89",
+   "bytes": 4331689451,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T04:31:11.000Z",
+   "links": [
+    "https://real-debrid.com/d/Z25NBNYU4TEJI7WT"
+   ],
+   "ended": "2026-07-28T04:32:46.000Z"
+  },
+  {
+   "id": "HNCXM3IWXPMXH",
+   "filename": "House.of.the.Dragon.S03E06.Faceless.Man.1080p.AMZN.WEB.DL.DDP5.1.Atmos.H.264-GP-TV-NLsubs.mkv",
+   "hash": "6a69789974327ed7b33613f70b09128842946545",
+   "bytes": 4849612040,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T08:08:30.000Z",
+   "links": [
+    "https://real-debrid.com/d/TJ6YZQDL22TTJZGX"
+   ],
+   "ended": "2026-07-27T08:10:04.000Z"
+  },
+  {
+   "id": "6U5MVVYKY44TR",
+   "filename": "House.of.the.Dragon.S03E06.1080p.AMZN.WEB.DL.DDP5.1.H.264-NTb.mkv",
+   "hash": "628256c19ec167ba7f497d1a97455b85bb888674",
+   "bytes": 4849903275,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T04:40:20.000Z",
+   "links": [
+    "https://real-debrid.com/d/NZQJRSJW4V2OGIFN"
+   ],
+   "ended": "2026-07-27T04:44:55.000Z"
+  },
+  {
+   "id": "OPEZSTQUQHFHF",
+   "filename": "House.of.the.Dragon.S03E06.Faceless.Man.REPACK.1080p.AMZN.WEB.DL.DDP5.1.Atmos.H.264-FLUX.mkv",
+   "hash": "6c1074ef36fc53ef7877cab5478b8f94996fa7b4",
+   "bytes": 4849612040,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T04:21:28.000Z",
+   "links": [
+    "https://real-debrid.com/d/XND6TBVCEITH3ES6"
+   ],
+   "ended": "2026-07-27T04:23:25.000Z"
+  },
+  {
+   "id": "T6OH2SWTABGJZ",
+   "filename": "House.of.the.Dragon.S03E06.1080p.AMZN.WEB.DL.DDP5.1.H.264-playWEB.mkv",
+   "hash": "5f2dac8fcb996eaa9b460ed509fdf365151f0bc0",
+   "bytes": 4789924553,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T03:51:38.000Z",
+   "links": [
+    "https://real-debrid.com/d/NE3VBFUNMBQAADUX"
+   ],
+   "ended": "2026-07-27T03:53:15.000Z"
+  },
+  {
+   "id": "5LW5WFPQXR5ZG",
+   "filename": "How to Make a Killing (2026) {imdb-tt4357198}",
+   "hash": "be5e9eda7bf8444c80a378050d5521f8e726a0dc",
+   "bytes": 21375325353,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-05-17T10:01:00.000Z",
+   "links": [
+    "https://real-debrid.com/d/MCO6AOLNO6EW63QI"
+   ],
+   "ended": "2026-05-17T10:16:51.000Z"
+  },
+  {
+   "id": "YMM6GQHT4EDIO",
+   "filename": "How To Make A Killing (2026) {imdb-tt4357198}-debrid03.mkv",
+   "hash": "0b59f37cfe2956f7c89abcc6d6d671fd383ec62c",
+   "bytes": 21375325353,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-05-15T04:20:11.000Z",
+   "links": [
+    "https://real-debrid.com/d/MB43IUPP3S25TQLZ"
+   ],
+   "ended": "2026-05-15T04:36:00.000Z"
+  },
+  {
+   "id": "LLHW2RXV5E3M6",
+   "filename": "How To Make A Killing (2026) {imdb-tt4357198}-debrid04.mkv",
+   "hash": "9ff38b86db69abbf534735059f31242d3826260c",
+   "bytes": 21375325353,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-05-15T04:19:53.000Z",
+   "links": [
+    "https://real-debrid.com/d/4VL6RA2ZYTXBPH4U"
+   ],
+   "ended": "2026-05-15T04:35:52.000Z"
+  },
+  {
+   "id": "GTIIIEZZFT3BO",
+   "filename": "How To Make A Killing (2026) {imdb-tt4357198}-debrid01.mkv",
+   "hash": "6294ce3a35ee8869c47a96af4faf79320b108bc2",
+   "bytes": 21375325353,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-05-15T04:19:16.000Z",
+   "links": [
+    "https://real-debrid.com/d/3S2XJV2L6NXJLLF6"
+   ],
+   "ended": "2026-05-15T04:48:05.000Z"
+  }
+ ],
+ "info": {
+  "TLGGJX6XSF5L5": {
+   "id": "TLGGJX6XSF5L5",
+   "filename": "One.more.shot.2024.1080p.Netflix.WEB.DL.H.264.EAC3.@TSRG.mkv",
+   "original_filename": "One.more.shot.2024.1080p.Netflix.WEB.DL.H.264.EAC3._TSRG {imdb-tt27110516}",
+   "hash": "8f528cae2ab525f013995622e393341bda753f23",
+   "bytes": 4827801801,
+   "original_bytes": 4827801801,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-31T21:28:35.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/One.more.shot.2024.1080p.Netflix.WEB.DL.H.264.EAC3.@TSRG.mkv",
+     "bytes": 4827801801,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/RDPRIWYZ6TUCSHPV"
+   ],
+   "ended": "2026-07-31T21:30:06.000Z"
+  },
+  "KF2U6LX7IV2EB": {
+   "id": "KF2U6LX7IV2EB",
+   "filename": "One.More.Shot.2024.1080p.NF.WEB.DL.EN-TR.DDP5.1.H.264-TURG.mkv",
+   "original_filename": "One.More.Shot.2024.1080p.NF.WEB.DL.EN-TR.DDP5.1.H.264-TURG {imdb-tt27110516}",
+   "hash": "a5c8c0a2355ef549645850add6b96a72a3372d85",
+   "bytes": 4827678570,
+   "original_bytes": 4827678570,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-31T21:16:52.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/One.More.Shot.2024.1080p.NF.WEB.DL.EN-TR.DDP5.1.H.264-TURG.mkv",
+     "bytes": 4827678570,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/H6TEFPMFK5GVRSBS"
+   ],
+   "ended": "2026-07-31T21:18:49.000Z"
+  },
+  "OB5UYHHVQOZKF": {
+   "id": "OB5UYHHVQOZKF",
+   "filename": "Love.in.Slow.Motion.2026.1080p.NF.WEB.DL.AVC.8bit.AAC.5.1.MultiAudios.ArSub.MultiSubs-Normal1406.mkv",
+   "original_filename": "Love.in.Slow.Motion.2026.1080p.NF.WEB.DL.AVC.8bit.AAC.5.1.MultiAudios.ArSub.MultiSubs-Normal1406 {imdb-tt43617119}",
+   "hash": "3691e47cdb6119ad736bd7c7d960710d3122d4b9",
+   "bytes": 3703814286,
+   "original_bytes": 3703814286,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-31T04:16:33.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Love.in.Slow.Motion.2026.1080p.NF.WEB.DL.AVC.8bit.AAC.5.1.MultiAudios.ArSub.MultiSubs-Normal1406.mkv",
+     "bytes": 3703814286,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/MWPO7DTI4NVU3B4T"
+   ],
+   "ended": "2026-07-31T04:18:05.000Z"
+  },
+  "OYC6JYDFMAT6L": {
+   "id": "OYC6JYDFMAT6L",
+   "filename": "One.More.Shot.2024.1080p.NF.WEB.DL.DDP5.1.H.264-TURG.mkv",
+   "original_filename": "One.More.Shot.2024.1080p.NF.WEB.DL.DDP5.1.H.264-TURG {imdb-tt27110516}",
+   "hash": "123bd70f93e7c8d9dee9c0485cf45c34ddb56c5f",
+   "bytes": 4825763776,
+   "original_bytes": 4825763776,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T17:59:34.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/One.More.Shot.2024.1080p.NF.WEB.DL.DDP5.1.H.264-TURG.mkv",
+     "bytes": 4825763776,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/DXSU6VE7ISL5QHVM"
+   ],
+   "ended": "2026-07-28T18:01:11.000Z"
+  },
+  "GTNK3UDPJH32T": {
+   "id": "GTNK3UDPJH32T",
+   "filename": "Love.in.slow.motion.2026.1080p.Netflix.WEB.DL.H.264.EAC3.@TSRG.mkv",
+   "original_filename": "Love.in.slow.motion.2026.1080p.Netflix.WEB.DL.H.264.EAC3._TSRG {imdb-tt43617119}",
+   "hash": "d453e139840452f62c9f5ead39d9ea7d06715c89",
+   "bytes": 4331689451,
+   "original_bytes": 4331689451,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T04:31:11.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Love.in.slow.motion.2026.1080p.Netflix.WEB.DL.H.264.EAC3.@TSRG.mkv",
+     "bytes": 4331689451,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/Z25NBNYU4TEJI7WT"
+   ],
+   "ended": "2026-07-28T04:32:46.000Z"
+  },
+  "5LW5WFPQXR5ZG": {
+   "id": "5LW5WFPQXR5ZG",
+   "filename": "How to Make a Killing (2026) {imdb-tt4357198}",
+   "original_filename": "How to Make a Killing (2026) {imdb-tt4357198}",
+   "hash": "be5e9eda7bf8444c80a378050d5521f8e726a0dc",
+   "bytes": 21375325353,
+   "original_bytes": 21375325353,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-05-17T10:01:00.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/How to Make a Killing (2026) {imdb-tt4357198}",
+     "bytes": 21375325353,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/MCO6AOLNO6EW63QI"
+   ],
+   "ended": "2026-05-17T10:16:51.000Z"
+  },
+  "YMM6GQHT4EDIO": {
+   "id": "YMM6GQHT4EDIO",
+   "filename": "How To Make A Killing (2026) {imdb-tt4357198}-debrid03.mkv",
+   "original_filename": "How To Make A Killing (2026) {imdb-tt4357198}-debrid03.mkv",
+   "hash": "0b59f37cfe2956f7c89abcc6d6d671fd383ec62c",
+   "bytes": 21375325353,
+   "original_bytes": 21375325353,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-05-15T04:20:11.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/How To Make A Killing (2026) {imdb-tt4357198}-debrid03.mkv",
+     "bytes": 21375325353,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/MB43IUPP3S25TQLZ"
+   ],
+   "ended": "2026-05-15T04:36:00.000Z"
+  },
+  "LLHW2RXV5E3M6": {
+   "id": "LLHW2RXV5E3M6",
+   "filename": "How To Make A Killing (2026) {imdb-tt4357198}-debrid04.mkv",
+   "original_filename": "How To Make A Killing (2026) {imdb-tt4357198}-debrid04.mkv",
+   "hash": "9ff38b86db69abbf534735059f31242d3826260c",
+   "bytes": 21375325353,
+   "original_bytes": 21375325353,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-05-15T04:19:53.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/How To Make A Killing (2026) {imdb-tt4357198}-debrid04.mkv",
+     "bytes": 21375325353,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/4VL6RA2ZYTXBPH4U"
+   ],
+   "ended": "2026-05-15T04:35:52.000Z"
+  },
+  "GTIIIEZZFT3BO": {
+   "id": "GTIIIEZZFT3BO",
+   "filename": "How To Make A Killing (2026) {imdb-tt4357198}-debrid01.mkv",
+   "original_filename": "How To Make A Killing (2026) {imdb-tt4357198}-debrid01.mkv",
+   "hash": "6294ce3a35ee8869c47a96af4faf79320b108bc2",
+   "bytes": 21375325353,
+   "original_bytes": 21375325353,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-05-15T04:19:16.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/How To Make A Killing (2026) {imdb-tt4357198}-debrid01.mkv",
+     "bytes": 21375325353,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/3S2XJV2L6NXJLLF6"
+   ],
+   "ended": "2026-05-15T04:48:05.000Z"
+  },
+  "AJULICSPB44YZ": {
+   "id": "AJULICSPB44YZ",
+   "filename": "House of the Dragon (2022) S02E06 (1080p MAX WEB.DL H265 SDR DDP Atmos 5.1 English - HONE).mkv",
+   "original_filename": "House of the Dragon (2022) S02E06 (1080p MAX WEB.DL H265 SDR DDP Atmos 5.1 English - HONE) {imdb-tt11198330}",
+   "hash": "52425fdb5a60af47f674061215f8066d803a5caf",
+   "bytes": 1520040176,
+   "original_bytes": 1520040176,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-08-07T02:44:44.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/House of the Dragon (2022) S02E06 (1080p MAX WEB.DL H265 SDR DDP Atmos 5.1 English - HONE).mkv",
+     "bytes": 1520040176,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/WSNORBD5DI7LN4QA"
+   ],
+   "ended": "2026-08-07T02:45:25.000Z"
+  },
+  "UNFT27SC6KPQB": {
+   "id": "UNFT27SC6KPQB",
+   "filename": "House Of The Dragon S01E09 1080p 10bit CRAV WEB.DL x265 HEVC [ Hindi DDP 2.0 - English DD 5.1 ] ESub ~Ã¢ÂÂRPIT ~PrimeFix.mkv",
+   "original_filename": "[13] - House Of The Dragon S01E09 1080p 10bit CRAV WEB.DL x265 HEVC [ Hindi DDP 2.0 - English DD 5.1 ] ESub ~ÃÂ¢ÃÂÃÂRPIT ~PrimeFix.mkv",
+   "hash": "6e963475537773ec53ac74baec9e18ab4d98a113",
+   "bytes": 1516568552,
+   "original_bytes": 1516568552,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-08-07T00:29:49.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/House Of The Dragon S01E09 1080p 10bit CRAV WEB.DL x265 HEVC [ Hindi DDP 2.0 - English DD 5.1 ] ESub ~Ã¢ÂÂRPIT ~PrimeFix.mkv",
+     "bytes": 1516568552,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/QLYG5TIRB3B2TULI"
+   ],
+   "ended": "2026-08-07T00:30:27.000Z"
+  },
+  "HNCXM3IWXPMXH": {
+   "id": "HNCXM3IWXPMXH",
+   "filename": "House.of.the.Dragon.S03E06.Faceless.Man.1080p.AMZN.WEB.DL.DDP5.1.Atmos.H.264-GP-TV-NLsubs.mkv",
+   "original_filename": "House.of.the.Dragon.S03E06.Faceless.Man.1080p.AMZN.WEB.DL.DDP5.1.Atmos.H.264-GP-TV-NLsubs",
+   "hash": "6a69789974327ed7b33613f70b09128842946545",
+   "bytes": 4849612040,
+   "original_bytes": 4849612040,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T08:08:30.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/House.of.the.Dragon.S03E06.Faceless.Man.1080p.AMZN.WEB.DL.DDP5.1.Atmos.H.264-GP-TV-NLsubs.mkv",
+     "bytes": 4849612040,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/TJ6YZQDL22TTJZGX"
+   ],
+   "ended": "2026-07-27T08:10:04.000Z"
+  },
+  "6U5MVVYKY44TR": {
+   "id": "6U5MVVYKY44TR",
+   "filename": "House.of.the.Dragon.S03E06.1080p.AMZN.WEB.DL.DDP5.1.H.264-NTb.mkv",
+   "original_filename": "House.of.the.Dragon.S03E06.1080p.AMZN.WEB.DL.DDP5.1.H.264-NTb",
+   "hash": "628256c19ec167ba7f497d1a97455b85bb888674",
+   "bytes": 4849903275,
+   "original_bytes": 4849903275,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T04:40:20.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/House.of.the.Dragon.S03E06.1080p.AMZN.WEB.DL.DDP5.1.H.264-NTb.mkv",
+     "bytes": 4849903275,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/NZQJRSJW4V2OGIFN"
+   ],
+   "ended": "2026-07-27T04:44:55.000Z"
+  },
+  "OPEZSTQUQHFHF": {
+   "id": "OPEZSTQUQHFHF",
+   "filename": "House.of.the.Dragon.S03E06.Faceless.Man.REPACK.1080p.AMZN.WEB.DL.DDP5.1.Atmos.H.264-FLUX.mkv",
+   "original_filename": "House.of.the.Dragon.S03E06.Faceless.Man.REPACK.1080p.AMZN.WEB.DL.DDP5.1.Atmos.H.264-FLUX",
+   "hash": "6c1074ef36fc53ef7877cab5478b8f94996fa7b4",
+   "bytes": 4849612040,
+   "original_bytes": 4849612040,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T04:21:28.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/House.of.the.Dragon.S03E06.Faceless.Man.REPACK.1080p.AMZN.WEB.DL.DDP5.1.Atmos.H.264-FLUX.mkv",
+     "bytes": 4849612040,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/XND6TBVCEITH3ES6"
+   ],
+   "ended": "2026-07-27T04:23:25.000Z"
+  },
+  "T6OH2SWTABGJZ": {
+   "id": "T6OH2SWTABGJZ",
+   "filename": "House.of.the.Dragon.S03E06.1080p.AMZN.WEB.DL.DDP5.1.H.264-playWEB.mkv",
+   "original_filename": "House.of.the.Dragon.S03E06.1080p.AMZN.WEB.DL.DDP5.1.H.264-playWEB",
+   "hash": "5f2dac8fcb996eaa9b460ed509fdf365151f0bc0",
+   "bytes": 4789924553,
+   "original_bytes": 4789924553,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T03:51:38.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/House.of.the.Dragon.S03E06.1080p.AMZN.WEB.DL.DDP5.1.H.264-playWEB.mkv",
+     "bytes": 4789924553,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/NE3VBFUNMBQAADUX"
+   ],
+   "ended": "2026-07-27T03:53:15.000Z"
+  }
+ }
+}

@@ -207,6 +207,22 @@ public sealed class LibrarySync
             }
         }
 
+        // One spelling per folder. Two releases of one title can differ only in case - the test account holds "One
+        // More Shot" and "One more shot" - and Emby groups a folder's files as versions of one item only when each
+        // file starts with the folder's name. Left alone that is two items on a case-sensitive filesystem and a
+        // folder whose files disagree with it on every other. What is already published keeps its spelling, since
+        // its path never moves, so it is what a newcomer joins.
+        var movieFolders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var seriesFolders = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        foreach (var path in desired.Keys.OrderBy(p => p, StringComparer.Ordinal))
+        {
+            var parts = path.Split('/');
+            if (parts.Length > 2)
+            {
+                (parts[0] == StrmPaths.Movies ? movieFolders : seriesFolders).TryAdd(parts[1], parts[1]);
+            }
+        }
+
         foreach (var (info, files) in pairs)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -243,11 +259,12 @@ public sealed class LibrarySync
                     }
 
                     var label = StrmPaths.Label(file.Path, key);
+                    var series = Canonical(seriesFolders, StrmPaths.Component(ReleaseNames.SeriesTitle(episode!), key));
                     var path = Claim(
-                        StrmPaths.EpisodePath(ReleaseNames.SeriesTitle(episode!), episode!.SeasonNumber, episode.EpisodeNumber, episode.EndingEpisodeNumber, label, key),
+                        StrmPaths.EpisodePath(series, episode!.SeasonNumber, episode.EpisodeNumber, episode.EndingEpisodeNumber, label, key),
                         key,
                         owners,
-                        () => StrmPaths.EpisodePath(ReleaseNames.SeriesTitle(episode!), episode.SeasonNumber, episode.EpisodeNumber, episode.EndingEpisodeNumber, label + " [" + key + "]", key),
+                        () => StrmPaths.EpisodePath(series, episode.SeasonNumber, episode.EpisodeNumber, episode.EndingEpisodeNumber, label + " [" + key + "]", key),
                         result);
 
                     Publish(desired, owners, sizes, path, key, info.Id, file.Path, file.Bytes, baseUrl, options, accountId);
@@ -280,7 +297,7 @@ public sealed class LibrarySync
             }
 
             var (title, year) = ReleaseNames.MovieTitle(primary.File.Path, info.Filename);
-            var folder = StrmPaths.MovieFolder(title, year, primary.Key);
+            var folder = Canonical(movieFolders, StrmPaths.MovieFolder(title, year, primary.Key));
             var movieLabel = StrmPaths.Label(primary.File.Path, primary.Key);
             var moviePath = Claim(
                 StrmPaths.MoviePath(folder, movieLabel),
@@ -324,6 +341,21 @@ public sealed class LibrarySync
 
     private static string Url(string baseUrl, PluginOptions options, string accountId, string key, string fileName)
         => LinkResolver.BuildUrl(baseUrl, key, fileName, options.StreamSecret, accountId);
+
+    /// <summary>Keeps one spelling per folder: whichever is already published, or else whichever this pass met first.</summary>
+    /// <param name="folders">The spellings already chosen.</param>
+    /// <param name="name">The folder name this release parsed to.</param>
+    /// <returns>The spelling to publish under.</returns>
+    private static string Canonical(Dictionary<string, string> folders, string name)
+    {
+        if (folders.TryGetValue(name, out var chosen))
+        {
+            return chosen;
+        }
+
+        folders[name] = name;
+        return name;
+    }
 
     private static string Claim(string path, string key, Dictionary<string, string> owners, Func<string> alternative, SyncResult result)
     {
