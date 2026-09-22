@@ -26,8 +26,9 @@ programdata `/home/ben/emby-rd-poc/config`. Account: the Real-Debrid **test** ac
 | File timestamps after the second pass | identical, so Emby re-probes nothing |
 | Ledger | 476 published, 28 ignored (the non-video files in those torrents) |
 
-The two torrents re-queried on every pass are the ones whose file list and links disagree; they are
-left alone deliberately rather than remembered as decided.
+The two torrents re-queried on every pass were not what this said. One is a torrent whose file list and
+links disagree (Real-Debrid packed its 4,452 files into one link), left alone deliberately; the other was
+a film carrying a second video, which nothing remembered. The audit build below fixes the second.
 
 **What Emby made of it**
 
@@ -58,6 +59,35 @@ left alone deliberately rather than remembered as decided.
 | ffmpeg seek to 30 s | succeeds |
 | Emby web, direct play (mp4) | Big Buck Bunny played from Real-Debrid, 18.5 s in, no error |
 | Emby web, transcode (mkv) | an X-Files episode played, 21.9 s in, no error |
+
+## Audit build - 2026-09-22, same rig
+
+Built from the `audit-2026-09-22` branch (DLL sha256 `4d01d48b…020f0`) and installed over the 1.0.0.0
+build above, keeping its ledger and tree. The account now holds 3,365 torrents.
+
+| | |
+|---|---|
+| First pass, limit 25, over the old ledger | 0 written, 0 rewritten, 476 unchanged, 2 detail calls (recording the extras) |
+| Second pass, limit 25 | 0 written, 0 rewritten, 1 detail call: the packed torrent |
+| Limit raised to 440 | 416 detail calls, 757 written, 31 copies held back, 13 capped, 129 s |
+| Second pass at 440 | 0 written, 0 rewritten, 1,233 unchanged, 4 detail calls, then 3 on the pass after |
+
+The three torrents still read on every pass at 440 are all ones whose file list and links disagree
+(`music`, `Big Buck Bunny`, `Sintel`). The fourth, once, was a copy of a capped Matrix release being
+converted to the new capped state.
+
+On zen's case-sensitive filesystem "House of the Dragon" (2022, S02E06) and "House Of The Dragon" (S01E09)
+published into **one** series folder, both episode files named after it.
+
+The limit-440 tree was a probe: the container was stopped before Emby's refresh fired, and the tree and
+ledger were restored to the limit-25 state afterwards. Emby never scanned the extra 757 files.
+
+Playback through the route, on Big Buck Bunny: unsigned 401, tampered signature 401, HEAD 200 with the full
+length, `bytes=0-3` 206, suffix `-100` 206, open-ended `1000-` 206, a range past the end 416, a multi-range
+416, the same 1 MB mid-file range twice byte-identical, and Emby's own ffprobe through the route reads
+`mov,mp4` 596.591 s.
+
+Not run on this build: a real player, a stored-RAR release, and an account switch.
 
 ## Not measured yet
 
