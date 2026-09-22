@@ -265,6 +265,16 @@ public sealed class LibrarySync
                         continue;
                     }
 
+                    // The same name and size under another key is a copy, for an episode as for a film: Real-Debrid
+                    // gives a re-added release fresh link keys (205 of the test account's 234 copies), and each
+                    // copy would otherwise become one more version of the same episode.
+                    if (!fingerprints.Add(Fingerprints.Of(file.Path, file.Bytes)))
+                    {
+                        _ledger.Put(new LedgerEntry { Key = key, TorrentId = info.Id, File = file.Path, Bytes = file.Bytes, Outcome = LedgerOutcome.Duplicate });
+                        result.Duplicates++;
+                        continue;
+                    }
+
                     var label = StrmPaths.Label(file.Path, key);
                     var series = Canonical(seriesFolders, StrmPaths.Component(ReleaseNames.SeriesTitle(episode!), key));
                     var path = Claim(
@@ -293,8 +303,8 @@ public sealed class LibrarySync
                 continue;
             }
 
-            // Real-Debrid hands identical content the same link key, so the usual copy of a release is caught
-            // by the key alone, above. This catches the rest: the same name and size under a different key.
+            // A copy of a release is the same name and size. Real-Debrid used to hand identical content the same
+            // link key, which the key check above catches; a re-added release now mostly gets fresh keys.
             var fingerprint = Fingerprints.Of(primary.File.Path, primary.File.Bytes);
             if (!fingerprints.Add(fingerprint))
             {

@@ -1,0 +1,735 @@
+{
+ "source": "The Real-Debrid test account on 2026-09-22, read with GET /torrents and /torrents/info/{id}: releases the account holds more than once under the same file names and sizes but different link keys (205 of the 234 such groups in its 3,365 torrents differ in key). Two films, two single episodes and a season pack. API answers with link keys, torrent ids and infohashes replaced by stable stand-ins on 2026-09-23.",
+ "listing": [
+  {
+   "id": "T2QSV5JAHNK2N",
+   "filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+   "hash": "931826d4d6793a628b47f9720787829007c02ee4",
+   "bytes": 6736682423,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-08-06T23:01:31.000Z",
+   "links": [
+    "https://real-debrid.com/d/5XOUDOU5O2S7RMGP"
+   ],
+   "ended": "2026-08-06T23:03:17.000Z"
+  },
+  {
+   "id": "DYHVP5DHNNSPG",
+   "filename": "The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb.mkv",
+   "hash": "4a5307015c60d7aa0138885c83bb1bc973b404c4",
+   "bytes": 5667117597,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-08-02T02:49:25.000Z",
+   "links": [
+    "https://real-debrid.com/d/WHYWC2CORPCLLYYD"
+   ],
+   "ended": "2026-08-02T02:51:41.000Z"
+  },
+  {
+   "id": "NMCBKCKKZH3KH",
+   "filename": "Late.Night.with.Seth.Meyers.S13E121.Common.Brittany.Broski.1080p.AMZN.WEB.DL.DDP5.1.H.264-Kitsune.mkv",
+   "hash": "04ad3d3c182bcdbe3c30589b572c8d0ab8dc9493",
+   "bytes": 2935107628,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T13:15:29.000Z",
+   "links": [
+    "https://real-debrid.com/d/4BMAEIA5I2D6VALZ"
+   ],
+   "ended": "2026-07-28T13:16:38.000Z"
+  },
+  {
+   "id": "RULX3L3W6MYGF",
+   "filename": "Late.Night.with.Seth.Meyers.S13E121.Common.Brittany.Broski.1080p.AMZN.WEB.DL.DDP5.1.H.264-Kitsune.mkv",
+   "hash": "dc05daac28c03af3b62017a921190ce8ddb938f6",
+   "bytes": 2935107628,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T13:12:11.000Z",
+   "links": [
+    "https://real-debrid.com/d/RSHWDXSDCHZHCVZJ"
+   ],
+   "ended": "2026-07-28T13:13:27.000Z"
+  },
+  {
+   "id": "FFFSXZOGBSURS",
+   "filename": "The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb.mkv",
+   "hash": "e53f98073344b985239729924ad227004a6d901e",
+   "bytes": 5667117597,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T03:29:31.000Z",
+   "links": [
+    "https://real-debrid.com/d/C4CCSQ5DJ535OFIR"
+   ],
+   "ended": "2026-07-28T03:31:25.000Z"
+  },
+  {
+   "id": "KP76YKX3YV344",
+   "filename": "The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb.mkv",
+   "hash": "cb4c558e2afa2f20d6aa280f96d04e874671f2e7",
+   "bytes": 5667117597,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T02:58:06.000Z",
+   "links": [
+    "https://real-debrid.com/d/DP7RY5XRLIYFJNOB"
+   ],
+   "ended": "2026-07-28T03:00:00.000Z"
+  },
+  {
+   "id": "OBBC3ZIWUCTEB",
+   "filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+   "hash": "e4b4ee000463facf7382eafb29ec47ce45bb94ee",
+   "bytes": 6736682423,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T10:39:21.000Z",
+   "links": [
+    "https://real-debrid.com/d/YYA3SEDRAPZWUUC5"
+   ],
+   "ended": "2026-07-27T10:42:10.000Z"
+  },
+  {
+   "id": "C6NNXFVCL2SSR",
+   "filename": "Mr.Loverman.S01.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE",
+   "hash": "9ac0d1065dc8b9a68339c9b67e97a91657f70af3",
+   "bytes": 8916640043,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T06:26:53.000Z",
+   "links": [
+    "https://real-debrid.com/d/OJY3NZOE7SV6E2H2",
+    "https://real-debrid.com/d/DVPFN67TWBUESOTU",
+    "https://real-debrid.com/d/6EWBHRMX76G7UJKP",
+    "https://real-debrid.com/d/TADKEXXYLZJHJ2CG",
+    "https://real-debrid.com/d/NCTNK24LBQMYUKHC",
+    "https://real-debrid.com/d/S2MKOWNBABERO45N",
+    "https://real-debrid.com/d/4TYXOTRUJOX5LSRZ",
+    "https://real-debrid.com/d/2KVN2KGMO45BDB5Z"
+   ],
+   "ended": "2026-07-27T06:29:07.000Z"
+  },
+  {
+   "id": "7HCD57OOLJYHL",
+   "filename": "Mr.Loverman.S01.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE",
+   "hash": "20c2d440906aeab5685b566f4ce8ed6af08b9ed2",
+   "bytes": 5973652817,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T06:22:34.000Z",
+   "links": [
+    "https://real-debrid.com/d/UC2LN34QCB3GJXAV",
+    "https://real-debrid.com/d/BKBRHVMQOFTVLWYM",
+    "https://real-debrid.com/d/NBHWXB7F5LPSF5QI",
+    "https://real-debrid.com/d/OTV2K262ICQHVA6E",
+    "https://real-debrid.com/d/HTZMHDKAFWTC2JRB",
+    "https://real-debrid.com/d/DOUIXBCNVE46DNGX",
+    "https://real-debrid.com/d/GAN7Y7V3NH3OLUDH",
+    "https://real-debrid.com/d/S73S4WNYYCMR54ZW"
+   ],
+   "ended": "2026-07-27T06:24:25.000Z"
+  },
+  {
+   "id": "L3XVIJUQHABD4",
+   "filename": "Mr.Loverman.S01.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE",
+   "hash": "9a4d63ef9b15d38e72e05593df061d0b2c54e5e3",
+   "bytes": 8916640043,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T05:08:38.000Z",
+   "links": [
+    "https://real-debrid.com/d/4IPBVBOHD6NWT4L4",
+    "https://real-debrid.com/d/2DPH4WLJHEKW7SZO",
+    "https://real-debrid.com/d/HI3NIMMGLHB3LKML",
+    "https://real-debrid.com/d/SK76RRPHPFBFIL6Z",
+    "https://real-debrid.com/d/XJN5YQRZ6IHKWX2I",
+    "https://real-debrid.com/d/LK3ZQZFNRDVQ35HD",
+    "https://real-debrid.com/d/JXKLWXXWPO3BDLOS",
+    "https://real-debrid.com/d/55CN3AS2FCEXOC3Q"
+   ],
+   "ended": "2026-07-27T05:11:34.000Z"
+  },
+  {
+   "id": "XDRRHMA6JB5LR",
+   "filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+   "hash": "fbbf0e58c7bf1c21b8cda45d5be21ca953101bee",
+   "bytes": 6736682423,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T02:11:16.000Z",
+   "links": [
+    "https://real-debrid.com/d/PVM2YI6T4ASWSK4Y"
+   ],
+   "ended": "2026-07-27T02:13:37.000Z"
+  },
+  {
+   "id": "43WYYXQDARTN6",
+   "filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+   "hash": "ce4ccc83bb8374c1160ded523b1e93d736033d36",
+   "bytes": 6736682423,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T02:06:11.000Z",
+   "links": [
+    "https://real-debrid.com/d/KG4GOXV4CZ6U6MQP"
+   ],
+   "ended": "2026-07-27T02:08:42.000Z"
+  },
+  {
+   "id": "GD3KMVOUSGNA3",
+   "filename": "The_Walking_Dead_Dead_City_S03E01_Trillium_1080p_AMZN_WEB.DL_DDP5_1_H_264-GP-TV-NLsubs.mkv",
+   "hash": "55a36e384a51ef98fdf66c878b7c3a9a693821ca",
+   "bytes": 2704154133,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-26T12:52:14.000Z",
+   "links": [
+    "https://real-debrid.com/d/O3TGXFPO2W3FBCLZ"
+   ],
+   "ended": "2026-07-26T12:53:14.000Z"
+  },
+  {
+   "id": "LQCVMGKW4XUEA",
+   "filename": "The_Walking_Dead_Dead_City_S03E01_Trillium_1080p_AMZN_WEB.DL_DDP5_1_H_264-GP-TV-NLsubs.mkv",
+   "hash": "94bce926e56c028da5570c8d7cb93cbd4882158a",
+   "bytes": 2704154133,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-26T11:55:04.000Z",
+   "links": [
+    "https://real-debrid.com/d/BXFKB2R2M72ZIPK3"
+   ],
+   "ended": "2026-07-26T11:56:16.000Z"
+  }
+ ],
+ "info": {
+  "T2QSV5JAHNK2N": {
+   "id": "T2QSV5JAHNK2N",
+   "filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+   "original_filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR {imdb-tt8814476}",
+   "hash": "931826d4d6793a628b47f9720787829007c02ee4",
+   "bytes": 6736682423,
+   "original_bytes": 6736682423,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-08-06T23:01:31.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+     "bytes": 6736682423,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/5XOUDOU5O2S7RMGP"
+   ],
+   "ended": "2026-08-06T23:03:17.000Z"
+  },
+  "DYHVP5DHNNSPG": {
+   "id": "DYHVP5DHNNSPG",
+   "filename": "The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb.mkv",
+   "original_filename": "The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb {imdb-tt14076114}",
+   "hash": "4a5307015c60d7aa0138885c83bb1bc973b404c4",
+   "bytes": 5667117597,
+   "original_bytes": 5667117597,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-08-02T02:49:25.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb.mkv",
+     "bytes": 5667117597,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/WHYWC2CORPCLLYYD"
+   ],
+   "ended": "2026-08-02T02:51:41.000Z"
+  },
+  "NMCBKCKKZH3KH": {
+   "id": "NMCBKCKKZH3KH",
+   "filename": "Late.Night.with.Seth.Meyers.S13E121.Common.Brittany.Broski.1080p.AMZN.WEB.DL.DDP5.1.H.264-Kitsune.mkv",
+   "original_filename": "Late.Night.with.Seth.Meyers.S13E121.Common.Brittany.Broski.1080p.AMZN.WEB.DL.DDP5.1.H.264-Kitsune",
+   "hash": "04ad3d3c182bcdbe3c30589b572c8d0ab8dc9493",
+   "bytes": 2935107628,
+   "original_bytes": 2935107628,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T13:15:29.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Late.Night.with.Seth.Meyers.S13E121.Common.Brittany.Broski.1080p.AMZN.WEB.DL.DDP5.1.H.264-Kitsune.mkv",
+     "bytes": 2935107628,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/4BMAEIA5I2D6VALZ"
+   ],
+   "ended": "2026-07-28T13:16:38.000Z"
+  },
+  "RULX3L3W6MYGF": {
+   "id": "RULX3L3W6MYGF",
+   "filename": "Late.Night.with.Seth.Meyers.S13E121.Common.Brittany.Broski.1080p.AMZN.WEB.DL.DDP5.1.H.264-Kitsune.mkv",
+   "original_filename": "Late.Night.with.Seth.Meyers.S13E121.Common.Brittany.Broski.1080p.AMZN.WEB.DL.DDP5.1.H.264-Kitsune",
+   "hash": "dc05daac28c03af3b62017a921190ce8ddb938f6",
+   "bytes": 2935107628,
+   "original_bytes": 2935107628,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T13:12:11.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Late.Night.with.Seth.Meyers.S13E121.Common.Brittany.Broski.1080p.AMZN.WEB.DL.DDP5.1.H.264-Kitsune.mkv",
+     "bytes": 2935107628,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/RSHWDXSDCHZHCVZJ"
+   ],
+   "ended": "2026-07-28T13:13:27.000Z"
+  },
+  "FFFSXZOGBSURS": {
+   "id": "FFFSXZOGBSURS",
+   "filename": "The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb.mkv",
+   "original_filename": "The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb {imdb-tt14076114}",
+   "hash": "e53f98073344b985239729924ad227004a6d901e",
+   "bytes": 5667117597,
+   "original_bytes": 5667117597,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T03:29:31.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb.mkv",
+     "bytes": 5667117597,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/C4CCSQ5DJ535OFIR"
+   ],
+   "ended": "2026-07-28T03:31:25.000Z"
+  },
+  "KP76YKX3YV344": {
+   "id": "KP76YKX3YV344",
+   "filename": "The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb.mkv",
+   "original_filename": "The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb {imdb-tt14076114}",
+   "hash": "cb4c558e2afa2f20d6aa280f96d04e874671f2e7",
+   "bytes": 5667117597,
+   "original_bytes": 5667117597,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-28T02:58:06.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/The.Amityville.Moon.2021.1080p.PCOK.WEB.DL.DDP.5.1.H.264-OnlyWeb.mkv",
+     "bytes": 5667117597,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/DP7RY5XRLIYFJNOB"
+   ],
+   "ended": "2026-07-28T03:00:00.000Z"
+  },
+  "OBBC3ZIWUCTEB": {
+   "id": "OBBC3ZIWUCTEB",
+   "filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+   "original_filename": "Supergirl_2026_1080p_AMZN_WEB.DL_DDP5_1_H_264-BYNDR {imdb-tt8814476}",
+   "hash": "e4b4ee000463facf7382eafb29ec47ce45bb94ee",
+   "bytes": 6736682423,
+   "original_bytes": 6736682423,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T10:39:21.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+     "bytes": 6736682423,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/YYA3SEDRAPZWUUC5"
+   ],
+   "ended": "2026-07-27T10:42:10.000Z"
+  },
+  "C6NNXFVCL2SSR": {
+   "id": "C6NNXFVCL2SSR",
+   "filename": "Mr.Loverman.S01.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE",
+   "original_filename": "Mr.Loverman.S01.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE",
+   "hash": "9ac0d1065dc8b9a68339c9b67e97a91657f70af3",
+   "bytes": 8916640043,
+   "original_bytes": 8916640043,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T06:26:53.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Mr.Loverman.S01E07.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 964401358,
+     "selected": 1
+    },
+    {
+     "id": 2,
+     "path": "/Mr.Loverman.S01E05.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 1301942615,
+     "selected": 1
+    },
+    {
+     "id": 3,
+     "path": "/Mr.Loverman.S01E06.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 882197554,
+     "selected": 1
+    },
+    {
+     "id": 4,
+     "path": "/Mr.Loverman.S01E01.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 1249129290,
+     "selected": 1
+    },
+    {
+     "id": 5,
+     "path": "/Mr.Loverman.S01E03.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 1249889370,
+     "selected": 1
+    },
+    {
+     "id": 6,
+     "path": "/Mr.Loverman.S01E08.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 801766124,
+     "selected": 1
+    },
+    {
+     "id": 7,
+     "path": "/Mr.Loverman.S01E02.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 1230434751,
+     "selected": 1
+    },
+    {
+     "id": 8,
+     "path": "/Mr.Loverman.S01E04.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 1236878981,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/OJY3NZOE7SV6E2H2",
+    "https://real-debrid.com/d/DVPFN67TWBUESOTU",
+    "https://real-debrid.com/d/6EWBHRMX76G7UJKP",
+    "https://real-debrid.com/d/TADKEXXYLZJHJ2CG",
+    "https://real-debrid.com/d/NCTNK24LBQMYUKHC",
+    "https://real-debrid.com/d/S2MKOWNBABERO45N",
+    "https://real-debrid.com/d/4TYXOTRUJOX5LSRZ",
+    "https://real-debrid.com/d/2KVN2KGMO45BDB5Z"
+   ],
+   "ended": "2026-07-27T06:29:07.000Z"
+  },
+  "7HCD57OOLJYHL": {
+   "id": "7HCD57OOLJYHL",
+   "filename": "Mr.Loverman.S01.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE",
+   "original_filename": "Mr.Loverman.S01.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE",
+   "hash": "20c2d440906aeab5685b566f4ce8ed6af08b9ed2",
+   "bytes": 5973652817,
+   "original_bytes": 5973652817,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T06:22:34.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Mr.Loverman.S01E01.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE.mkv",
+     "bytes": 831721300,
+     "selected": 1
+    },
+    {
+     "id": 2,
+     "path": "/Mr.Loverman.S01E04.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE.mkv",
+     "bytes": 828656678,
+     "selected": 1
+    },
+    {
+     "id": 3,
+     "path": "/Mr.Loverman.S01E08.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE.mkv",
+     "bytes": 540253763,
+     "selected": 1
+    },
+    {
+     "id": 4,
+     "path": "/Mr.Loverman.S01E07.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE.mkv",
+     "bytes": 650627669,
+     "selected": 1
+    },
+    {
+     "id": 5,
+     "path": "/Mr.Loverman.S01E05.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE.mkv",
+     "bytes": 873457226,
+     "selected": 1
+    },
+    {
+     "id": 6,
+     "path": "/Mr.Loverman.S01E02.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE.mkv",
+     "bytes": 821310482,
+     "selected": 1
+    },
+    {
+     "id": 7,
+     "path": "/Mr.Loverman.S01E06.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE.mkv",
+     "bytes": 593362836,
+     "selected": 1
+    },
+    {
+     "id": 8,
+     "path": "/Mr.Loverman.S01E03.NORDiC.1080p.VIAP.WEB.DL.H.265-NORViNE.mkv",
+     "bytes": 834262863,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/UC2LN34QCB3GJXAV",
+    "https://real-debrid.com/d/BKBRHVMQOFTVLWYM",
+    "https://real-debrid.com/d/NBHWXB7F5LPSF5QI",
+    "https://real-debrid.com/d/OTV2K262ICQHVA6E",
+    "https://real-debrid.com/d/HTZMHDKAFWTC2JRB",
+    "https://real-debrid.com/d/DOUIXBCNVE46DNGX",
+    "https://real-debrid.com/d/GAN7Y7V3NH3OLUDH",
+    "https://real-debrid.com/d/S73S4WNYYCMR54ZW"
+   ],
+   "ended": "2026-07-27T06:24:25.000Z"
+  },
+  "L3XVIJUQHABD4": {
+   "id": "L3XVIJUQHABD4",
+   "filename": "Mr.Loverman.S01.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE",
+   "original_filename": "Mr.Loverman.S01.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE",
+   "hash": "9a4d63ef9b15d38e72e05593df061d0b2c54e5e3",
+   "bytes": 8916640043,
+   "original_bytes": 8916640043,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T05:08:38.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Mr.Loverman.S01E01.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 1249129290,
+     "selected": 1
+    },
+    {
+     "id": 2,
+     "path": "/Mr.Loverman.S01E02.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 1230434751,
+     "selected": 1
+    },
+    {
+     "id": 3,
+     "path": "/Mr.Loverman.S01E03.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 1249889370,
+     "selected": 1
+    },
+    {
+     "id": 4,
+     "path": "/Mr.Loverman.S01E04.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 1236878981,
+     "selected": 1
+    },
+    {
+     "id": 5,
+     "path": "/Mr.Loverman.S01E05.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 1301942615,
+     "selected": 1
+    },
+    {
+     "id": 6,
+     "path": "/Mr.Loverman.S01E06.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 882197554,
+     "selected": 1
+    },
+    {
+     "id": 7,
+     "path": "/Mr.Loverman.S01E07.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 964401358,
+     "selected": 1
+    },
+    {
+     "id": 8,
+     "path": "/Mr.Loverman.S01E08.NORDiC.1080p.VIAP.WEB.DL.H.264-NORViNE.mkv",
+     "bytes": 801766124,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/4IPBVBOHD6NWT4L4",
+    "https://real-debrid.com/d/2DPH4WLJHEKW7SZO",
+    "https://real-debrid.com/d/HI3NIMMGLHB3LKML",
+    "https://real-debrid.com/d/SK76RRPHPFBFIL6Z",
+    "https://real-debrid.com/d/XJN5YQRZ6IHKWX2I",
+    "https://real-debrid.com/d/LK3ZQZFNRDVQ35HD",
+    "https://real-debrid.com/d/JXKLWXXWPO3BDLOS",
+    "https://real-debrid.com/d/55CN3AS2FCEXOC3Q"
+   ],
+   "ended": "2026-07-27T05:11:34.000Z"
+  },
+  "XDRRHMA6JB5LR": {
+   "id": "XDRRHMA6JB5LR",
+   "filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+   "original_filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR {imdb-tt8814476}",
+   "hash": "fbbf0e58c7bf1c21b8cda45d5be21ca953101bee",
+   "bytes": 6736682423,
+   "original_bytes": 6736682423,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T02:11:16.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+     "bytes": 6736682423,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/PVM2YI6T4ASWSK4Y"
+   ],
+   "ended": "2026-07-27T02:13:37.000Z"
+  },
+  "43WYYXQDARTN6": {
+   "id": "43WYYXQDARTN6",
+   "filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+   "original_filename": "Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR {imdb-tt8814476}",
+   "hash": "ce4ccc83bb8374c1160ded523b1e93d736033d36",
+   "bytes": 6736682423,
+   "original_bytes": 6736682423,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-27T02:06:11.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/Supergirl.2026.1080p.AMZN.WEB.DL.DDP5.1.H.264-BYNDR.mkv",
+     "bytes": 6736682423,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/KG4GOXV4CZ6U6MQP"
+   ],
+   "ended": "2026-07-27T02:08:42.000Z"
+  },
+  "GD3KMVOUSGNA3": {
+   "id": "GD3KMVOUSGNA3",
+   "filename": "The_Walking_Dead_Dead_City_S03E01_Trillium_1080p_AMZN_WEB.DL_DDP5_1_H_264-GP-TV-NLsubs.mkv",
+   "original_filename": "The Walking Dead Dead City S03E01 Trillium 1080p AMZN WEB.DL DDP5 1 H 264-GP-TV-NLsubs",
+   "hash": "55a36e384a51ef98fdf66c878b7c3a9a693821ca",
+   "bytes": 2704154133,
+   "original_bytes": 2704154133,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-26T12:52:14.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/The_Walking_Dead_Dead_City_S03E01_Trillium_1080p_AMZN_WEB.DL_DDP5_1_H_264-GP-TV-NLsubs.mkv",
+     "bytes": 2704154133,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/O3TGXFPO2W3FBCLZ"
+   ],
+   "ended": "2026-07-26T12:53:14.000Z"
+  },
+  "LQCVMGKW4XUEA": {
+   "id": "LQCVMGKW4XUEA",
+   "filename": "The_Walking_Dead_Dead_City_S03E01_Trillium_1080p_AMZN_WEB.DL_DDP5_1_H_264-GP-TV-NLsubs.mkv",
+   "original_filename": "The_Walking_Dead_Dead_City_S03E01_Trillium_1080p_AMZN_WEB.DL_DDP5_1_H_264-GP-TV-NLsubs",
+   "hash": "94bce926e56c028da5570c8d7cb93cbd4882158a",
+   "bytes": 2704154133,
+   "original_bytes": 2704154133,
+   "host": "real-debrid.com",
+   "split": 2000,
+   "progress": 100,
+   "status": "downloaded",
+   "added": "2026-07-26T11:55:04.000Z",
+   "files": [
+    {
+     "id": 1,
+     "path": "/The_Walking_Dead_Dead_City_S03E01_Trillium_1080p_AMZN_WEB.DL_DDP5_1_H_264-GP-TV-NLsubs.mkv",
+     "bytes": 2704154133,
+     "selected": 1
+    }
+   ],
+   "links": [
+    "https://real-debrid.com/d/BXFKB2R2M72ZIPK3"
+   ],
+   "ended": "2026-07-26T11:56:16.000Z"
+  }
+ }
+}

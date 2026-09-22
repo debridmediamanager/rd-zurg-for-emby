@@ -389,6 +389,33 @@ public sealed class LibrarySyncTests : IDisposable
         AssertOneSpellingPerFolder(after.Keys);
     }
 
+    /// <summary>
+    /// Real-Debrid no longer hands a copy its original's link key: the test account holds 234 releases more than
+    /// once under the same name and size, and 205 of them under different keys. Films were already recognised by
+    /// name and size; episodes were not, so each copy of an episode became another version of it.
+    /// </summary>
+    [Fact]
+    public async Task ACopyOfAnEpisodeIsPublishedOnce()
+    {
+        var (sync, account, options, tree, _, _) = Full(Copies);
+        var result = await sync.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+
+        var published = tree.Published().Keys.ToList();
+        var episodes = published.Where(p => p.StartsWith(StrmPaths.Shows + "/", StringComparison.Ordinal))
+            .GroupBy(p => System.Text.RegularExpressions.Regex.Match(p, @"^shows/[^/]+/[^/]+/.+? - (S[0-9]{2}E[0-9]{2})").Value, StringComparer.OrdinalIgnoreCase)
+            .ToDictionary(g => g.Key, g => g.Count(), StringComparer.OrdinalIgnoreCase);
+
+        // One Late Night episode, one Dead City episode, and two versions of each Mr Loverman episode: the H.264
+        // pack is in the account twice, the H.265 pack once.
+        Assert.Equal(2 + 8, episodes.Count);
+        Assert.All(episodes.Where(e => !e.Key.Contains("Loverman", StringComparison.OrdinalIgnoreCase)), e => Assert.Equal(1, e.Value));
+        Assert.All(episodes.Where(e => e.Key.Contains("Loverman", StringComparison.OrdinalIgnoreCase)), e => Assert.Equal(2, e.Value));
+
+        // And the films, which were already right: one Supergirl, one Amityville Moon.
+        Assert.Equal(2, published.Count(p => p.StartsWith(StrmPaths.Movies + "/", StringComparison.Ordinal)));
+        Assert.Equal(0, result.Collisions);
+    }
+
     private static void AssertOneSpellingPerFolder(IEnumerable<string> paths)
     {
         var split = paths.Select(p => p.Split('/')).ToList();
@@ -413,6 +440,8 @@ public sealed class LibrarySyncTests : IDisposable
     }
 
     private const string CaseVariants = "rd-case-variants-2026-09-22.json";
+
+    private const string Copies = "rd-copies-2026-09-22.json";
 
     private (LibrarySync Sync, FakeAccount Account, PluginOptions Options, StrmTree Tree, Ledger Ledger, string LedgerPath) Full(string fixture = "rd-library-1.0.2.0.json")
     {

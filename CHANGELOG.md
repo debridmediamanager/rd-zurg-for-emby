@@ -21,3 +21,6 @@ playback from a signed route inside Emby.
 - A pass over an unchanged account asks Real-Debrid about nothing. The videos a torrent holds besides its film
   or its episodes (featurettes, samples, a collection's other films) were remembered nowhere, so every such
   torrent cost a detail call on every pass.
+- A copy of an episode is published once. Real-Debrid now gives a re-added release fresh link keys, so only the
+  name and size recognise a copy; films were checked that way, episodes were not, and each copy became one more
+  version of the same episode.
