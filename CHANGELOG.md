@@ -33,3 +33,6 @@ playback from a signed route inside Emby.
 - A name long enough to be cut keeps what identifies it: the year, a yearless folder's tag, the episode number
   and the tag that tells two releases apart are no longer the part cut off. Before, two long releases of one
   film could collide and one was dropped. No name in the test account is that long; the test is constructed.
+- A Real-Debrid call that is never answered fails after a minute instead of hanging. The plugin's HTTP client
+  has no timeout because it also streams, so one silent call held the sync forever and every cold playback
+  queued behind it.

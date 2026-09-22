@@ -35,6 +35,34 @@ public class RealDebridClientTests
         await Assert.ThrowsAsync<HttpRequestException>(() => client.GetTorrentInfoAsync("torrent", CancellationToken.None));
     }
 
+    /// <summary>
+    /// The plugin's HTTP client has no timeout, because it also streams. A call Real-Debrid never answers has to fail
+    /// rather than hang: the sync would never finish, and every cold playback waits behind the resolver's one gate.
+    /// </summary>
+    [Fact]
+    public async Task AnUnansweredCallFailsInsteadOfHanging()
+    {
+        using var http = new HttpClient(new SilentHandler()) { Timeout = Timeout.InfiniteTimeSpan };
+        var client = new RealDebridClient(http, "test") { RequestTimeout = TimeSpan.FromMilliseconds(300) };
+
+        var listing = client.GetTorrentsAsync(0, CancellationToken.None);
+        var unrestrict = client.UnrestrictAsync("ZH4JR4PYJ6S2C", null, CancellationToken.None);
+        await Task.WhenAny(Task.WhenAll(listing, unrestrict), Task.Delay(TimeSpan.FromSeconds(20)));
+
+        Assert.True(listing.IsCompleted && unrestrict.IsCompleted, "a call Real-Debrid never answered is still waiting");
+        await Assert.ThrowsAsync<HttpRequestException>(() => listing);
+        await Assert.ThrowsAsync<HttpRequestException>(() => unrestrict);
+    }
+
+    private sealed class SilentHandler : HttpMessageHandler
+    {
+        protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        {
+            await Task.Delay(Timeout.InfiniteTimeSpan, cancellationToken).ConfigureAwait(false);
+            throw new InvalidOperationException("unreachable");
+        }
+    }
+
     private sealed class ListingHandler(bool overlap) : HttpMessageHandler
     {
         private int _calls;

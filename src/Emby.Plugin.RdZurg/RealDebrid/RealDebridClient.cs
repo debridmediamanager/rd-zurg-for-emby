@@ -66,6 +66,13 @@ public sealed class RealDebridClient
     /// <summary>The gap Real-Debrid wants between two unrestrict calls, which is far longer than the rest.</summary>
     internal static TimeSpan UnrestrictInterval { get; set; } = TimeSpan.FromSeconds(5);
 
+    /// <summary>
+    /// Gets how long one call may take, answer included. The plugin's HTTP client has no timeout of its own, because
+    /// it also streams files that play for hours; without this an unanswered call hung the sync for good, and every
+    /// cold playback queued behind an unrestrict that never came back.
+    /// </summary>
+    public TimeSpan RequestTimeout { get; init; } = TimeSpan.FromSeconds(60);
+
     private readonly HttpClient _http;
     private readonly string _token;
     private readonly TimeSpan _minInterval;
@@ -239,7 +246,20 @@ public sealed class RealDebridClient
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", _token);
         request.Content = content;
 
-        var response = await _http.SendAsync(request, cancellationToken).ConfigureAwait(false);
+        // The whole answer is read inside SendAsync, so the timeout covers the body as well as the headers.
+        using var timeout = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        timeout.CancelAfter(RequestTimeout);
+        HttpResponseMessage response;
+        try
+        {
+            response = await _http.SendAsync(request, timeout.Token).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException ex) when (!cancellationToken.IsCancellationRequested)
+        {
+            throw new HttpRequestException(
+                string.Format(CultureInfo.InvariantCulture, "Real-Debrid did not answer within {0} seconds.", RequestTimeout.TotalSeconds),
+                ex);
+        }
 
         if (response.StatusCode == HttpStatusCode.TooManyRequests)
         {
