@@ -44,6 +44,9 @@ internal sealed class FakeAccount : HttpMessageHandler
     /// <summary>Gets or sets a status the listing answers with instead, to fail a pass.</summary>
     public HttpStatusCode? ListingFailure { get; set; }
 
+    /// <summary>Gets or sets what happens to the account right after a listing page is served, by page number.</summary>
+    public Action<int>? AfterPage { get; set; }
+
     /// <summary>Gets or sets the account id the token belongs to.</summary>
     public string AccountId { get; set; } = "1234567";
 
@@ -135,6 +138,7 @@ internal sealed class FakeAccount : HttpMessageHandler
             var body = "[" + string.Join(",", slice.Select(t => t.GetRawText())) + "]";
             var response = new HttpResponseMessage(HttpStatusCode.OK) { Content = new StringContent(body) };
             response.Headers.Add("X-Total-Count", Torrents.Count.ToString(CultureInfo.InvariantCulture));
+            AfterPage?.Invoke(page);
             return Task.FromResult(response);
         }
 

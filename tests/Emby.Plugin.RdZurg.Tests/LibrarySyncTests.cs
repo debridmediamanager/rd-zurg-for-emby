@@ -201,6 +201,33 @@ public sealed class LibrarySyncTests : IDisposable
         Assert.Equal(before.Count, tree.Published().Count);
     }
 
+    /// <summary>
+    /// A torrent removed while the listing is being paged moves the first torrent of the next page onto the page
+    /// already read, so a walk that trusted its pages would never see that torrent and would delete its files as
+    /// vanished. Real-Debrid's total count moves with it, and the pass refuses instead.
+    /// </summary>
+    [Fact]
+    public async Task ATorrentRemovedMidListingDeletesNothingElse()
+    {
+        var (sync, account, options, tree, ledger, path) = Full();
+        await sync.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        ledger.Save(path);
+        var before = tree.Published();
+
+        account.AfterPage = page =>
+        {
+            if (page == 1)
+            {
+                account.Torrents.RemoveAt(0);
+                account.AfterPage = null;
+            }
+        };
+
+        var (second, _) = Continue(account, path);
+        await Assert.ThrowsAsync<IOException>(() => second.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None));
+        Assert.Equal(before.Count, tree.Published().Count);
+    }
+
     [Fact]
     public async Task AnAccountThatSuddenlyEmptiesDoesNotEmptyTheLibrary()
     {
