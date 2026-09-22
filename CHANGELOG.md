@@ -30,3 +30,6 @@ playback from a signed route inside Emby.
 - A folder never holds more than eight versions. A pass that may not delete (a torrent limit, or "Remove
   vanished items" off) left a vanished version's file in place but did not count it, so a new release made
   nine and Emby stopped grouping the film.
+- A name long enough to be cut keeps what identifies it: the year, a yearless folder's tag, the episode number
+  and the tag that tells two releases apart are no longer the part cut off. Before, two long releases of one
+  film could collide and one was dropped. No name in the test account is that long; the test is constructed.

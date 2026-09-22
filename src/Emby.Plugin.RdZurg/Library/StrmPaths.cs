@@ -32,6 +32,14 @@ public static class StrmPaths
     /// <remarks>Measured on Emby 4.10: eight files group into one item, nine become nine items.</remarks>
     public const int MaxVersions = 8;
 
+    // What one path component may take, leaving room for ".strm" and for filesystems that count differently.
+    private const int ComponentBytes = 200;
+
+    // What a folder name may take. A file is named after its folder and then says which version or which episode it
+    // is, so the folder leaves room for that: cut at the full budget, the episode number or the tag that tells two
+    // releases apart was the part that fell off.
+    private const int FolderBytes = 150;
+
     private static readonly char[] _invalid = "<>:\"/\\|?*".ToCharArray();
 
     // Tokens that make Emby read a file as something other than the release: an extra, a disc of a stack, a 3D
@@ -53,20 +61,31 @@ public static class StrmPaths
     /// <returns>A folder name.</returns>
     public static string MovieFolder(string title, int? year, string key)
     {
-        var clean = Component(title, fallback: key);
-        return year is int value
-            ? Component(string.Format(CultureInfo.InvariantCulture, "{0} ({1})", clean, value), key)
+        ArgumentNullException.ThrowIfNull(key);
 
-            // Emby strips a bracketed tag before searching, so the folder still reads as the title.
-            : Component(string.Format(CultureInfo.InvariantCulture, "{0} [{1}]", clean, key), key);
+        // The year is what Emby searches with and the tag is what keeps a yearless release to itself, so the title
+        // yields to them rather than the other way round. Emby strips a bracketed tag before searching, so the
+        // folder still reads as the title.
+        var suffix = year is int value
+            ? string.Format(CultureInfo.InvariantCulture, " ({0})", value)
+            : string.Format(CultureInfo.InvariantCulture, " [{0}]", key);
+        var clean = Truncate(Component(title, fallback: key), FolderBytes - Encoding.UTF8.GetByteCount(suffix));
+        return Component(clean + suffix, key);
     }
 
     /// <summary>The file a film release is published at.</summary>
     /// <param name="folder">The folder from <see cref="MovieFolder"/>.</param>
     /// <param name="label">The version label, from <see cref="Label"/>.</param>
     /// <returns>A path relative to the tree root.</returns>
-    public static string MoviePath(string folder, string label)
-        => string.Format(CultureInfo.InvariantCulture, "{0}/{1}/{2}", Movies, folder, Component(folder + " - " + label, folder) + ".strm");
+    /// <param name="tag">A tag that tells this file apart from another with the same name, kept whole when the name is cut.</param>
+    public static string MoviePath(string folder, string label, string? tag = null)
+        => string.Format(CultureInfo.InvariantCulture, "{0}/{1}/{2}", Movies, folder, Tagged(folder + " - " + label, folder, tag) + ".strm");
+
+    /// <summary>The folder a series' episodes live in.</summary>
+    /// <param name="series">The series title.</param>
+    /// <param name="key">The content key, used when the series has no usable name.</param>
+    /// <returns>A folder name.</returns>
+    public static string SeriesFolder(string series, string key) => Truncate(Component(series, key), FolderBytes);
 
     /// <summary>The file an episode is published at.</summary>
     /// <param name="series">The series title.</param>
@@ -75,10 +94,11 @@ public static class StrmPaths
     /// <param name="endingEpisode">The last episode of a multi-episode file, if any.</param>
     /// <param name="label">The version label, from <see cref="Label"/>.</param>
     /// <param name="key">The content key, used when the series has no usable name.</param>
+    /// <param name="tag">A tag that tells this file apart from another with the same name, kept whole when the name is cut.</param>
     /// <returns>A path relative to the tree root.</returns>
-    public static string EpisodePath(string series, int season, int episode, int? endingEpisode, string label, string key)
+    public static string EpisodePath(string series, int season, int episode, int? endingEpisode, string label, string key, string? tag = null)
     {
-        var folder = Component(series, key);
+        var folder = SeriesFolder(series, key);
         var numbers = endingEpisode is int end
             ? string.Format(CultureInfo.InvariantCulture, "S{0:D2}E{1:D2}-E{2:D2}", season, episode, end)
             : string.Format(CultureInfo.InvariantCulture, "S{0:D2}E{1:D2}", season, episode);
@@ -89,7 +109,20 @@ public static class StrmPaths
             Shows,
             folder,
             season,
-            Component(string.Format(CultureInfo.InvariantCulture, "{0} - {1} - {2}", folder, numbers, label), folder + " - " + numbers) + ".strm");
+            Tagged(string.Format(CultureInfo.InvariantCulture, "{0} - {1} - {2}", folder, numbers, label), folder + " - " + numbers, tag) + ".strm");
+    }
+
+    // A tag appended after the cut would be cut with it, and two names that only differed past the budget would
+    // collide again. So the name is cut short enough to leave the tag whole.
+    private static string Tagged(string name, string fallback, string? tag)
+    {
+        if (string.IsNullOrEmpty(tag))
+        {
+            return Component(name, fallback);
+        }
+
+        var suffix = " [" + tag + "]";
+        return Truncate(Component(name, fallback), ComponentBytes - Encoding.UTF8.GetByteCount(suffix)) + suffix;
     }
 
     /// <summary>
@@ -126,9 +159,9 @@ public static class StrmPaths
 
         // A leading dot hides the file; a trailing dot or space is dropped by Windows and confuses everything else.
         cleaned = cleaned.TrimStart('.').TrimEnd('.', ' ').Trim();
-        cleaned = Truncate(cleaned, 200);
+        cleaned = Truncate(cleaned, ComponentBytes);
 
-        return cleaned.Length > 0 ? cleaned : Truncate(fallback, 200);
+        return cleaned.Length > 0 ? cleaned : Truncate(fallback, ComponentBytes);
     }
 
     /// <summary>Cuts a component to a byte budget without splitting a character.</summary>

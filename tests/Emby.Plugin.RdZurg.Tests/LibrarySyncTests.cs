@@ -530,6 +530,47 @@ public sealed class LibrarySyncTests : IDisposable
     private static int InFolder(StrmTree tree, string folder)
         => tree.Published().Keys.Count(p => p.StartsWith(folder + "/", StringComparison.OrdinalIgnoreCase));
 
+    /// <summary>
+    /// Names past the length budget. No release in the test account's 3,365 torrents comes near it (the longest name
+    /// is 155 bytes), so these are constructed: a title long enough that the year, the yearless folder's tag, the
+    /// episode number or the tag that tells two releases apart would be cut off the end of the name.
+    /// </summary>
+    [Fact]
+    public async Task ALongNameKeepsWhatIdentifiesIt()
+    {
+        var (sync, account, options, tree, _, _) = Full();
+        account.Keep();
+        var title = string.Join('.', Enumerable.Repeat("An.Extraordinarily.Long.Title", 8));
+        var tail = ".1080p.WEB-DL.DDP5.1.H.264-" + new string('X', 60);
+        Add(account, "AAAAAAAAAAAA1", title + ".2020" + tail + "A.mkv", 3_000_000_000);
+        Add(account, "AAAAAAAAAAAA2", title + ".2020" + tail + "B.mkv", 2_000_000_000);
+        Add(account, "AAAAAAAAAAAA3", title + tail + "A.mkv", 3_000_000_001);
+        Add(account, "AAAAAAAAAAAA4", title + tail + "B.mkv", 2_000_000_001);
+        Add(account, "AAAAAAAAAAAA5", title + ".S01E02" + tail + ".mkv", 1_000_000_000);
+
+        var result = await sync.RunAsync(options, BaseUrl, account.AccountId, null, CancellationToken.None);
+        var published = tree.Published().Keys.Select(p => p.Split('/')).ToList();
+
+        // Nothing is dropped: two releases that differ only past the budget are still two files.
+        Assert.Equal(5, result.FilesWritten);
+        Assert.Equal(5, published.Count);
+
+        var films = published.Where(p => p[0] == StrmPaths.Movies).ToList();
+        Assert.Equal(2, films.Count(p => p[1].EndsWith(" (2020)", StringComparison.Ordinal)));
+        Assert.Equal(2, films.Count(p => p[1].EndsWith("]", StringComparison.Ordinal)));
+        Assert.Equal(2, films.Where(p => p[1].EndsWith("]", StringComparison.Ordinal)).Select(p => p[1]).Distinct(StringComparer.OrdinalIgnoreCase).Count());
+        Assert.All(films, p => Assert.StartsWith(p[1] + " - ", p[2], StringComparison.Ordinal));
+
+        var episode = Assert.Single(published, p => p[0] == StrmPaths.Shows);
+        Assert.Contains(" - S01E02 - ", episode[3], StringComparison.Ordinal);
+        Assert.StartsWith(episode[1] + " - S01E02", episode[3], StringComparison.Ordinal);
+
+        Assert.All(published.SelectMany(p => p), c => Assert.True(System.Text.Encoding.UTF8.GetByteCount(c) <= 205, c));
+    }
+
+    private static void Add(FakeAccount account, string key, string name, long bytes)
+        => account.AddSingleFileTorrent("T" + key, name, (key, name, bytes, "https://real-debrid.com/d/" + key));
+
     private static void AssertOneSpellingPerFolder(IEnumerable<string> paths)
     {
         var split = paths.Select(p => p.Split('/')).ToList();

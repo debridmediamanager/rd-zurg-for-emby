@@ -310,12 +310,12 @@ public sealed class LibrarySync
                     }
 
                     var label = StrmPaths.Label(file.Path, key);
-                    var series = Canonical(seriesFolders, StrmPaths.Component(ReleaseNames.SeriesTitle(episode!), key));
+                    var series = Canonical(seriesFolders, StrmPaths.SeriesFolder(ReleaseNames.SeriesTitle(episode!), key));
                     var path = Claim(
                         StrmPaths.EpisodePath(series, episode!.SeasonNumber, episode.EpisodeNumber, episode.EndingEpisodeNumber, label, key),
                         key,
                         owners,
-                        () => StrmPaths.EpisodePath(series, episode.SeasonNumber, episode.EpisodeNumber, episode.EndingEpisodeNumber, label + " [" + key + "]", key),
+                        () => StrmPaths.EpisodePath(series, episode.SeasonNumber, episode.EpisodeNumber, episode.EndingEpisodeNumber, label, key, key),
                         result);
 
                     Publish(desired, owners, sizes, path, key, info.Id, file.Path, file.Bytes, baseUrl, options, accountId);
@@ -361,7 +361,7 @@ public sealed class LibrarySync
                 StrmPaths.MoviePath(folder, movieLabel),
                 primary.Key,
                 owners,
-                () => StrmPaths.MoviePath(folder, movieLabel + " [" + primary.Key + "]"),
+                () => StrmPaths.MoviePath(folder, movieLabel, primary.Key),
                 result);
 
             Publish(desired, owners, sizes, moviePath, primary.Key, info.Id, primary.File.Path, primary.File.Bytes, baseUrl, options, accountId);
