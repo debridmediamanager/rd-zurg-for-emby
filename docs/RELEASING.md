@@ -49,6 +49,6 @@
 
 ## Distribution
 
-Emby has no third-party plugin catalogue, so there is nothing to publish to. A release is the DLL
-and its checksum; how it reaches sponsors is still to be decided, and the Jellyfin catalogue at
-DMM's `/api/plugins` is Jellyfin's manifest format and cannot carry it as it stands.
+Emby has no third-party plugin catalogue. A tag builds the DLL and its checksum, publishes them to
+DMM's sponsor download page at `/emby`, and creates a **draft** GitHub release with the same two
+files. Publishing that draft is what makes the release the one the README's install steps point at.

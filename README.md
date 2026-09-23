@@ -9,14 +9,28 @@ build.
 
 ## Install
 
-1. Stop Emby and back up its programdata directory.
-2. Copy `Emby.Plugin.RdZurg.dll` into `<programdata>/plugins/`. Verify the adjacent SHA-256 file.
-3. Start Emby. Open **Settings - Plugins - RD zurg**.
-4. Enter the private token from [Real-Debrid](https://real-debrid.com/apitoken) and save.
-5. Run **Settings - Scheduled Tasks - Sync Real-Debrid library**. It then runs every six hours.
+This is a standalone plugin. It needs no zurg service and none of the other zurg plugins, so it can
+be installed on its own. Emby has no catalogue for third-party plugins, so installing means copying
+one file.
+
+1. Download `Emby.Plugin.RdZurg.dll` and `Emby.Plugin.RdZurg.dll.sha256` from the
+   [latest release](https://github.com/debridmediamanager/rd-zurg-for-emby/releases/latest), then
+   check the download with `sha256sum -c Emby.Plugin.RdZurg.dll.sha256` (`shasum -a 256 -c` on macOS).
+2. Stop Emby and back up its programdata directory.
+3. Copy `Emby.Plugin.RdZurg.dll` into `<programdata>/plugins/`, directly and not in a subdirectory.
+4. Start Emby. Open **Settings - Plugins - RD zurg**.
+5. Enter the private token from [Real-Debrid](https://real-debrid.com/apitoken) and save.
+6. Run **Settings - Scheduled Tasks - Sync Real-Debrid library**. It then runs every six hours.
 
 For the Docker image the programdata directory is `/config`; native installs commonly use
 `/var/lib/emby`.
+
+To upgrade, stop Emby, overwrite `Emby.Plugin.RdZurg.dll` with the new release and start Emby again.
+Settings are stored under `<programdata>/plugins/configurations/` and are kept, and so are the files
+the plugin already wrote.
+
+To build and install from source instead, see [Build](#build); `./build.sh <programdata>` installs
+the plugin it builds.
 
 ## How it works
 
