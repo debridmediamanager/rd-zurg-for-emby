@@ -78,3 +78,11 @@ python3 scripts/verify-package.py
 
 See [docs/RELEASING.md](docs/RELEASING.md) for the checks a release has to pass and
 [docs/VALIDATION.md](docs/VALIDATION.md) for what has actually been measured.
+
+## License
+
+[MIT](LICENSE). The episode and title parser under `src/Emby.Plugin.RdZurg/Naming/` is derived from
+the original MIT-licensed Emby.Naming; its notice is in
+[LICENSE-Emby.Naming.md](src/Emby.Plugin.RdZurg/Naming/LICENSE-Emby.Naming.md). The dev-only
+`tools/parse-golden` generator is not part of the plugin and references Jellyfin's GPL-3.0
+Jellyfin.Naming package.
